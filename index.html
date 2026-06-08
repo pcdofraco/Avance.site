@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AVANCE — Seu Sistema de Evolução</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Mono:wght@300;400;500&family=Outfit:wght@200;300;400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#080808;
+  --bg2:#0f0f0f;
+  --bg3:#161616;
+  --t1:#f5f0eb;
+  --t2:rgba(245,240,235,0.55);
+  --t3:rgba(245,240,235,0.22);
+  --t4:rgba(245,240,235,0.09);
+  --gold:rgba(210,180,120,0.85);
+  --gold2:rgba(210,180,120,0.15);
+  --green:rgba(100,220,140,0.8);
+  --red:rgba(255,100,90,0.8);
+  --mono:'DM Mono',monospace;
+  --serif:'Syne',sans-serif;
+  --sans:'Outfit',sans-serif;
+}
+html{background:var(--bg);scroll-behavior:smooth;}
+body{
+  background:var(--bg);
+  color:var(--t1);
+  font-family:var(--sans);
+  overflow-x:hidden;
+  line-height:1;
+}
+
+/* ── NOISE TEXTURE ── */
+body::before{
+  content:'';position:fixed;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.028'/%3E%3C/svg%3E");
+  background-size:256px;pointer-events:none;z-index:0;
+}
+body>*{position:relative;z-index:1;}
+
+/* ── NAV ── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:22px clamp(24px,5vw,72px);
+  background:rgba(8,8,8,0);
+  backdrop-filter:blur(0px);
+  transition:background 0.5s,backdrop-filter 0.5s;
+}
+nav.scrolled{
+  background:rgba(8,8,8,0.85);
+  backdrop-filter:blur(24px);
+  border-bottom:1px solid rgba(245,240,235,0.04);
+}
+.nav-logo{
+  font-family:var(--mono);font-size:11px;letter-spacing:0.38em;
+  color:var(--t1);text-transform:uppercase;text-decoration:none;
+}
+.nav-links{display:flex;align-items:center;gap:36px;}
+.nav-links a{
+  font-family:var(--mono);font-size:9px;letter-spacing:0.18em;
+  color:var(--t3);text-transform:uppercase;text-decoration:none;
+  transition:color 0.2s;
+}
+.nav-links a:hover{color:var(--t1);}
+.nav-cta{
+  font-family:var(--mono);font-size:9px;letter-spacing:0.18em;
+  color:var(--bg);text-transform:uppercase;text-decoration:none;
+  background:var(--t1);padding:10px 22px;border-radius:100px;
+  transition:opacity 0.2s,transform 0.15s;
+}
+.nav-cta:hover{opacity:0.85;transform:translateY(-1px);}
+
+/* ── HERO ── */
+#hero{
+  min-height:100vh;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:120px clamp(24px,5vw,72px) 80px;
+  text-align:center;
+  position:relative;overflow:hidden;
+}
+
+/* ambient orbs */
+.orb{
+  position:absolute;border-radius:50%;pointer-events:none;
+  filter:blur(120px);opacity:0;
+  animation:orbFloat 12s ease-in-out infinite;
+}
+.orb-1{width:600px;height:600px;background:rgba(210,180,120,0.04);top:-10%;left:-15%;animation-delay:0s;}
+.orb-2{width:500px;height:500px;background:rgba(100,140,255,0.03);bottom:-10%;right:-10%;animation-delay:4s;}
+.orb-3{width:400px;height:400px;background:rgba(100,220,140,0.025);top:40%;left:50%;transform:translateX(-50%);animation-delay:8s;}
+@keyframes orbFloat{
+  0%,100%{opacity:1;transform:translateY(0) scale(1);}
+  50%{opacity:0.6;transform:translateY(-30px) scale(1.05);}
+}
+
+.hero-eyebrow{
+  font-family:var(--mono);font-size:9px;letter-spacing:0.32em;
+  color:var(--gold);text-transform:uppercase;
+  margin-bottom:28px;
+  opacity:0;animation:fadeUp 0.8s 0.2s ease-out forwards;
+}
+.hero-title{
+  font-family:var(--serif);
+  font-size:clamp(38px,6vw,80px);
+  font-weight:500;line-height:0.95;
+  letter-spacing:-0.02em;
+  color:var(--t1);
+  margin-bottom:8px;
+  opacity:0;animation:fadeUp 0.9s 0.35s ease-out forwards;
+}
+.hero-title em{color:var(--t2);}
+.hero-sub{
+  font-size:clamp(14px,2vw,18px);font-weight:200;
+  color:var(--t2);line-height:1.7;
+  max-width:480px;margin:0 auto 48px;
+  opacity:0;animation:fadeUp 0.9s 0.55s ease-out forwards;
+}
+.hero-actions{
+  display:flex;align-items:center;gap:16px;justify-content:center;flex-wrap:wrap;
+  opacity:0;animation:fadeUp 0.9s 0.72s ease-out forwards;
+}
+.btn-primary{
+  display:inline-flex;align-items:center;gap:10px;
+  padding:15px 36px;border-radius:100px;
+  background:var(--t1);color:var(--bg);
+  font-family:var(--mono);font-size:10px;letter-spacing:0.2em;text-transform:uppercase;
+  text-decoration:none;
+  transition:transform 0.2s,box-shadow 0.2s,opacity 0.2s;
+  box-shadow:0 0 0 0 rgba(245,240,235,0);
+}
+.btn-primary:hover{
+  transform:translateY(-2px);
+  box-shadow:0 12px 40px rgba(245,240,235,0.1);
+}
+.btn-ghost{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:15px 28px;border-radius:100px;
+  border:1px solid rgba(245,240,235,0.12);
+  color:var(--t2);
+  font-family:var(--mono);font-size:10px;letter-spacing:0.18em;text-transform:uppercase;
+  text-decoration:none;background:none;
+  transition:border-color 0.2s,color 0.2s,transform 0.2s;
+}
+.btn-ghost:hover{border-color:rgba(245,240,235,0.35);color:var(--t1);transform:translateY(-2px);}
+
+/* hero mockup float */
+.hero-device{
+  margin-top:72px;
+  opacity:0;animation:fadeUp 1s 0.9s ease-out forwards;
+  position:relative;display:inline-block;
+}
+.hero-device-frame{
+  width:clamp(260px,38vw,380px);
+  background:rgba(20,20,20,0.9);
+  border-radius:36px;
+  border:1px solid rgba(245,240,235,0.1);
+  box-shadow:
+    0 0 0 1px rgba(245,240,235,0.04) inset,
+    0 60px 120px rgba(0,0,0,0.8),
+    0 0 80px rgba(210,180,120,0.04);
+  overflow:hidden;padding:0;
+  animation:deviceFloat 6s ease-in-out infinite;
+}
+@keyframes deviceFloat{
+  0%,100%{transform:translateY(0);}
+  50%{transform:translateY(-14px);}
+}
+.device-screen{
+  background:linear-gradient(180deg,#0d0d0d 0%,#0a0a0a 100%);
+  padding:28px 22px 22px;
+}
+
+/* mockup components */
+.dm-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;}
+.dm-logo{font-family:var(--mono);font-size:9px;letter-spacing:0.32em;color:rgba(245,240,235,0.4);}
+.dm-ring{width:28px;height:28px;border-radius:50%;border:2px solid rgba(245,240,235,0.08);border-top-color:rgba(245,240,235,0.6);position:relative;}
+.dm-ring::after{content:'72%';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:6px;color:rgba(245,240,235,0.5);}
+
+.dm-greeting{font-size:22px;font-weight:400;color:rgba(245,240,235,0.9);margin-bottom:4px;letter-spacing:-0.02em;}
+.dm-sub{font-family:var(--mono);font-size:8px;letter-spacing:0.18em;color:rgba(245,240,235,0.25);text-transform:uppercase;margin-bottom:20px;}
+
+.dm-section-lbl{font-family:var(--mono);font-size:7px;letter-spacing:0.2em;color:rgba(245,240,235,0.2);text-transform:uppercase;margin-bottom:10px;}
+.dm-hab-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.dm-circle{width:16px;height:16px;border-radius:50%;border:1.5px solid;flex-shrink:0;}
+.dm-circle.done{border-color:transparent;}
+.dm-hab-name{font-size:12px;color:rgba(245,240,235,0.7);flex:1;}
+.dm-hab-meta{font-family:var(--mono);font-size:8px;color:rgba(245,240,235,0.25);}
+.dm-divider{height:1px;background:rgba(245,240,235,0.05);margin:14px 0;}
+.dm-fin-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;}
+.dm-fin-lbl{font-family:var(--mono);font-size:7px;letter-spacing:0.14em;color:rgba(245,240,235,0.25);text-transform:uppercase;}
+.dm-fin-val{font-family:var(--mono);font-size:16px;font-weight:400;color:rgba(245,240,235,0.8);}
+.dm-bar{height:2px;background:rgba(245,240,235,0.07);border-radius:2px;margin-top:10px;overflow:hidden;}
+.dm-bar-fill{height:100%;border-radius:2px;background:rgba(245,240,235,0.45);width:62%;}
+
+/* glow halo around device */
+.hero-device::before{
+  content:'';position:absolute;
+  inset:-40px;border-radius:50%;
+  background:radial-gradient(ellipse at center,rgba(210,180,120,0.06) 0%,transparent 70%);
+  pointer-events:none;z-index:-1;
+}
+
+/* ── SCROLL INDICATOR ── */
+.scroll-hint{
+  position:absolute;bottom:36px;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  opacity:0;animation:fadeIn 1s 1.4s forwards;
+}
+.scroll-hint span{font-family:var(--mono);font-size:7px;letter-spacing:0.22em;color:var(--t3);text-transform:uppercase;}
+.scroll-arrow{width:1px;height:36px;background:linear-gradient(to bottom,rgba(245,240,235,0.2),transparent);animation:arrowDrop 1.8s ease-in-out infinite;}
+@keyframes arrowDrop{0%,100%{transform:scaleY(1);opacity:0.6;}50%{transform:scaleY(1.2);opacity:1;}}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(28px);}to{opacity:1;transform:translateY(0);}}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+
+/* ── SECTION BASE ── */
+section{padding:clamp(80px,12vw,160px) clamp(24px,5vw,72px);}
+.reveal{opacity:0;transform:translateY(32px);transition:opacity 0.8s ease,transform 0.8s ease;}
+.reveal.visible{opacity:1;transform:translateY(0);}
+.reveal-delay-1{transition-delay:0.1s;}
+.reveal-delay-2{transition-delay:0.2s;}
+.reveal-delay-3{transition-delay:0.3s;}
+.reveal-delay-4{transition-delay:0.45s;}
+
+/* ── SECTION LABEL ── */
+.sec-label{
+  font-family:var(--mono);font-size:8px;letter-spacing:0.32em;
+  color:var(--gold);text-transform:uppercase;
+  display:flex;align-items:center;gap:14px;margin-bottom:20px;
+}
+.sec-label::before{content:'';display:block;width:28px;height:1px;background:var(--gold);}
+
+/* ── INTRO / MANIFESTO ── */
+#manifesto{
+  max-width:1200px;margin:0 auto;
+  display:grid;grid-template-columns:1fr 1fr;gap:clamp(40px,8vw,120px);
+  align-items:center;
+}
+.manifesto-left .sec-label{margin-bottom:28px;}
+.manifesto-title{
+  font-family:var(--serif);
+  font-size:clamp(26px,3.5vw,48px);
+  font-weight:400;line-height:1.12;
+  letter-spacing:-0.01em;
+  margin-bottom:28px;
+}
+.manifesto-title em{color:var(--t2);}
+.manifesto-text{
+  font-size:clamp(14px,1.5vw,16px);font-weight:200;
+  color:var(--t2);line-height:1.8;
+  margin-bottom:16px;
+}
+.manifesto-stats{display:flex;gap:36px;margin-top:40px;}
+.stat-item{text-align:left;}
+.stat-num{font-family:var(--serif);font-size:clamp(36px,4vw,52px);font-weight:400;color:var(--t1);line-height:1;}
+.stat-lbl{font-family:var(--mono);font-size:8px;letter-spacing:0.16em;color:var(--t3);text-transform:uppercase;margin-top:6px;}
+
+.manifesto-right{position:relative;}
+.manifesto-card{
+  background:rgba(245,240,235,0.025);
+  border:1px solid rgba(245,240,235,0.07);
+  border-radius:20px;padding:32px;
+  backdrop-filter:blur(20px);
+  position:relative;overflow:hidden;
+}
+.manifesto-card::before{
+  content:'';position:absolute;inset:0;border-radius:inherit;
+  background:linear-gradient(135deg,rgba(245,240,235,0.04) 0%,transparent 60%);
+  pointer-events:none;
+}
+.mc-line{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid rgba(245,240,235,0.05);}
+.mc-line:last-child{border-bottom:none;}
+.mc-icon{width:32px;height:32px;border-radius:10px;background:rgba(245,240,235,0.04);border:1px solid rgba(245,240,235,0.07);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.mc-info{flex:1;}
+.mc-name{font-size:13px;color:rgba(245,240,235,0.75);margin-bottom:3px;}
+.mc-meta{font-family:var(--mono);font-size:8px;color:rgba(245,240,235,0.25);letter-spacing:0.06em;}
+.mc-val{font-family:var(--mono);font-size:12px;color:rgba(245,240,235,0.4);}
+.mc-val.pos{color:rgba(100,220,140,0.7);}
+.mc-val.fire{color:rgba(255,160,60,0.8);}
+
+/* ── FEATURES GRID ── */
+#features{max-width:1200px;margin:0 auto;}
+.features-header{text-align:center;margin-bottom:clamp(48px,8vw,80px);}
+.features-title{
+  font-family:var(--serif);font-size:clamp(24px,3.5vw,46px);
+  font-weight:400;line-height:1.1;
+  margin-bottom:12px;
+}
+.features-title em{color:var(--t2);}
+.features-sub{font-size:clamp(13px,1.5vw,15px);font-weight:200;color:var(--t2);line-height:1.8;max-width:440px;margin:0 auto;}
+
+.features-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:1px;
+  background:rgba(245,240,235,0.05);
+  border-radius:24px;overflow:hidden;
+}
+.feat-card{
+  background:var(--bg);
+  padding:clamp(28px,4vw,48px);
+  position:relative;overflow:hidden;
+  transition:background 0.3s;
+}
+.feat-card:hover{background:rgba(245,240,235,0.015);}
+.feat-card::after{
+  content:'';position:absolute;inset:0;opacity:0;
+  background:linear-gradient(135deg,rgba(210,180,120,0.04) 0%,transparent 60%);
+  transition:opacity 0.3s;pointer-events:none;
+}
+.feat-card:hover::after{opacity:1;}
+.feat-icon{
+  width:40px;height:40px;border-radius:12px;
+  border:1px solid rgba(245,240,235,0.08);
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;margin-bottom:20px;
+  background:rgba(245,240,235,0.03);
+}
+.feat-title{
+  font-size:clamp(15px,2vw,18px);font-weight:400;
+  color:var(--t1);margin-bottom:10px;line-height:1.3;
+}
+.feat-desc{
+  font-size:clamp(12px,1.3vw,14px);font-weight:200;
+  color:var(--t2);line-height:1.7;
+}
+.feat-tag{
+  display:inline-block;margin-top:16px;
+  font-family:var(--mono);font-size:8px;letter-spacing:0.14em;
+  color:var(--t3);text-transform:uppercase;
+  padding:4px 10px;border-radius:20px;
+  border:1px solid rgba(245,240,235,0.06);
+}
+
+/* ── SHOWCASE — FULL WIDTH SECTION ── */
+#showcase{
+  padding:0;overflow:hidden;
+  background:linear-gradient(180deg,var(--bg) 0%,var(--bg2) 50%,var(--bg) 100%);
+}
+.showcase-inner{
+  max-width:1400px;margin:0 auto;
+  padding:clamp(80px,12vw,140px) clamp(24px,5vw,72px);
+  display:grid;grid-template-columns:1fr 1fr;gap:clamp(48px,8vw,100px);
+  align-items:center;
+}
+.showcase-inner.reverse{direction:rtl;}
+.showcase-inner.reverse>*{direction:ltr;}
+
+.showcase-text .sec-label{margin-bottom:24px;}
+.showcase-title{
+  font-family:var(--serif);font-size:clamp(30px,4.5vw,56px);
+  font-weight:400;line-height:1.1;margin-bottom:20px;
+}
+.showcase-title em{color:var(--t2);}
+.showcase-desc{
+  font-size:clamp(13px,1.5vw,15px);font-weight:200;
+  color:var(--t2);line-height:1.8;margin-bottom:28px;
+}
+.showcase-pills{display:flex;flex-wrap:wrap;gap:8px;}
+.showcase-pill{
+  font-family:var(--mono);font-size:8px;letter-spacing:0.12em;
+  color:var(--t3);text-transform:uppercase;
+  padding:6px 14px;border-radius:100px;
+  border:1px solid rgba(245,240,235,0.07);
+}
+
+/* mockup panels */
+.mock-panel{
+  background:rgba(14,14,14,0.9);
+  border:1px solid rgba(245,240,235,0.07);
+  border-radius:24px;
+  overflow:hidden;
+  box-shadow:0 40px 100px rgba(0,0,0,0.7);
+  position:relative;
+}
+.mock-panel::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(245,240,235,0.12),transparent);
+}
+.mock-topbar{
+  display:flex;align-items:center;gap:6px;
+  padding:14px 16px;border-bottom:1px solid rgba(245,240,235,0.04);
+}
+.mock-dot{width:8px;height:8px;border-radius:50%;}
+.mock-content{padding:20px;}
+.mock-section-lbl{font-family:var(--mono);font-size:7px;letter-spacing:0.2em;color:rgba(245,240,235,0.2);text-transform:uppercase;margin-bottom:12px;}
+
+/* habit rows in mockup */
+.mock-hab{display:flex;align-items:center;gap:12px;margin-bottom:12px;padding:12px;border-radius:12px;background:rgba(245,240,235,0.02);}
+.mock-chk{width:18px;height:18px;border-radius:50%;border:1.5px solid;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:#0d0d0d;}
+.mock-hab-body{flex:1;}
+.mock-hab-name{font-size:12px;color:rgba(245,240,235,0.75);margin-bottom:3px;}
+.mock-hab-meta{font-family:var(--mono);font-size:8px;color:rgba(245,240,235,0.25);}
+.mock-streak{font-family:var(--mono);font-size:9px;color:rgba(255,160,60,0.7);}
+
+/* finance in mockup */
+.mock-fin-hero{padding:16px 20px 0;}
+.mock-fin-lbl-sm{font-family:var(--mono);font-size:7px;letter-spacing:0.2em;color:rgba(245,240,235,0.25);text-transform:uppercase;margin-bottom:6px;}
+.mock-fin-big{font-size:32px;font-weight:400;color:rgba(245,240,235,0.9);letter-spacing:-0.02em;margin-bottom:16px;}
+.mock-fin-row{display:flex;justify-content:space-between;padding:10px 20px;border-top:1px solid rgba(245,240,235,0.04);}
+.mock-fin-item-lbl{font-family:var(--mono);font-size:8px;letter-spacing:0.1em;color:rgba(245,240,235,0.25);text-transform:uppercase;}
+.mock-fin-item-val{font-family:var(--mono);font-size:14px;font-weight:400;}
+.mock-fin-item-val.g{color:rgba(100,220,140,0.75);}
+.mock-fin-item-val.r{color:rgba(255,100,90,0.75);}
+
+/* cat bars */
+.mock-cat-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;padding:0 20px;}
+.mock-cat-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.mock-cat-name{font-size:11px;color:rgba(245,240,235,0.5);width:90px;flex-shrink:0;}
+.mock-cat-bar{flex:1;height:3px;background:rgba(245,240,235,0.06);border-radius:3px;overflow:hidden;}
+.mock-cat-fill{height:100%;border-radius:3px;}
+.mock-cat-pct{font-family:var(--mono);font-size:8px;color:rgba(245,240,235,0.25);width:28px;text-align:right;}
+
+/* treino mockup */
+.mock-treino-day-row{display:flex;gap:0;border-bottom:1px solid rgba(245,240,235,0.04);margin-bottom:16px;}
+.mock-tr-day{flex:1;padding:10px 4px;text-align:center;}
+.mock-tr-day-lbl{font-family:var(--mono);font-size:8px;color:rgba(245,240,235,0.2);text-transform:uppercase;}
+.mock-tr-day-dot{width:4px;height:4px;border-radius:50%;background:rgba(245,240,235,0.08);margin:5px auto 0;}
+.mock-tr-day.sel .mock-tr-day-lbl{color:rgba(245,240,235,0.8);}
+.mock-tr-day.sel{border-bottom:2px solid rgba(245,240,235,0.5);margin-bottom:-1px;}
+.mock-tr-day.done .mock-tr-day-dot{background:rgba(100,220,140,0.7);}
+.mock-ficha{display:flex;align-items:center;gap:12px;padding:14px;border-radius:12px;border:1px solid rgba(245,240,235,0.05);margin-bottom:8px;}
+.mock-ficha-badge{width:32px;height:32px;border-radius:8px;background:rgba(245,240,235,0.04);border:1px solid rgba(245,240,235,0.07);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:11px;font-weight:700;color:rgba(245,240,235,0.4);}
+.mock-ficha-badge.done{border-color:rgba(100,220,140,0.3);background:rgba(100,220,140,0.06);color:rgba(100,220,140,0.7);}
+.mock-ficha-info{flex:1;}
+.mock-ficha-name{font-size:13px;color:rgba(245,240,235,0.75);margin-bottom:3px;}
+.mock-ficha-meta{font-family:var(--mono);font-size:8px;color:rgba(245,240,235,0.25);}
+
+/* ── PRICING ── */
+#pricing{
+  max-width:1000px;margin:0 auto;text-align:center;
+}
+.pricing-header .sec-label{justify-content:center;margin-bottom:20px;}
+.pricing-header .sec-label::before{display:none;}
+.pricing-title{
+  font-family:var(--serif);font-size:clamp(32px,5vw,60px);
+  font-weight:400;line-height:1.1;margin-bottom:14px;
+}
+.pricing-sub{font-size:clamp(13px,1.5vw,15px);font-weight:200;color:var(--t2);line-height:1.8;margin-bottom:56px;}
+
+.pricing-cards{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;text-align:left;}
+.pricing-card{
+  background:rgba(245,240,235,0.02);
+  border:1px solid rgba(245,240,235,0.07);
+  border-radius:20px;padding:32px;
+  position:relative;overflow:hidden;
+  transition:border-color 0.3s,transform 0.3s;
+}
+.pricing-card:hover{border-color:rgba(245,240,235,0.15);transform:translateY(-4px);}
+.pricing-card.featured{
+  border-color:rgba(210,180,120,0.25);
+  background:rgba(210,180,120,0.03);
+}
+.pricing-card.featured::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(210,180,120,0.4),transparent);
+}
+.pricing-badge{
+  display:inline-block;margin-bottom:16px;
+  font-family:var(--mono);font-size:7px;letter-spacing:0.2em;text-transform:uppercase;
+  padding:5px 12px;border-radius:100px;
+}
+.badge-free{background:rgba(245,240,235,0.05);color:var(--t3);}
+.badge-pro{background:rgba(210,180,120,0.1);color:var(--gold);border:1px solid rgba(210,180,120,0.2);}
+.badge-yearly{background:rgba(100,220,140,0.07);color:rgba(100,220,140,0.7);border:1px solid rgba(100,220,140,0.15);}
+.pricing-price{
+  font-family:var(--serif);font-size:48px;font-weight:400;
+  color:var(--t1);line-height:1;margin-bottom:4px;
+}
+.pricing-price sup{font-size:20px;vertical-align:super;margin-right:2px;color:var(--t2);}
+.pricing-price sub{font-size:14px;vertical-align:sub;color:var(--t3);font-family:var(--mono);}
+.pricing-period{font-family:var(--mono);font-size:9px;letter-spacing:0.1em;color:var(--t3);text-transform:uppercase;margin-bottom:28px;}
+.pricing-divider{height:1px;background:rgba(245,240,235,0.05);margin-bottom:24px;}
+.pricing-feature{
+  display:flex;align-items:flex-start;gap:10px;
+  font-size:13px;font-weight:200;color:var(--t2);
+  line-height:1.5;margin-bottom:12px;
+}
+.pricing-feature::before{
+  content:'—';
+  font-family:var(--mono);font-size:10px;color:var(--t4);
+  flex-shrink:0;margin-top:2px;
+}
+.pricing-feature.included::before{content:'✓';color:rgba(100,220,140,0.65);}
+.pricing-btn{
+  display:block;width:100%;margin-top:28px;
+  padding:13px;border-radius:12px;text-align:center;
+  font-family:var(--mono);font-size:9px;letter-spacing:0.16em;text-transform:uppercase;
+  text-decoration:none;cursor:pointer;border:none;
+  transition:all 0.2s;
+}
+.btn-pricefree{background:rgba(245,240,235,0.04);color:var(--t2);border:1px solid rgba(245,240,235,0.08);}
+.btn-pricefree:hover{background:rgba(245,240,235,0.08);color:var(--t1);}
+.btn-pricepro{background:rgba(210,180,120,0.12);color:var(--gold);border:1px solid rgba(210,180,120,0.2);}
+.btn-pricepro:hover{background:rgba(210,180,120,0.2);}
+.btn-priceyear{background:rgba(100,220,140,0.08);color:rgba(100,220,140,0.8);border:1px solid rgba(100,220,140,0.15);}
+.btn-priceyear:hover{background:rgba(100,220,140,0.15);}
+
+/* ── TESTIMONIALS ── */
+#testimonials{
+  max-width:1200px;margin:0 auto;
+}
+.test-header{text-align:center;margin-bottom:clamp(40px,6vw,64px);}
+.test-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.test-card{
+  background:rgba(245,240,235,0.02);
+  border:1px solid rgba(245,240,235,0.06);
+  border-radius:18px;padding:28px;
+  transition:border-color 0.3s;
+}
+.test-card:hover{border-color:rgba(245,240,235,0.12);}
+.test-quote{
+  font-family:var(--serif);font-size:clamp(15px,2vw,18px);
+  font-weight:400;font-style:italic;
+  color:rgba(245,240,235,0.75);line-height:1.6;
+  margin-bottom:20px;
+}
+.test-quote::before{content:'"';font-size:1.5em;color:var(--gold);line-height:0;vertical-align:-0.25em;margin-right:3px;}
+.test-author{display:flex;align-items:center;gap:10px;}
+.test-avatar{width:32px;height:32px;border-radius:50%;background:rgba(245,240,235,0.06);display:flex;align-items:center;justify-content:center;font-size:14px;}
+.test-name{font-family:var(--mono);font-size:9px;letter-spacing:0.1em;color:var(--t2);}
+.test-role{font-family:var(--mono);font-size:8px;letter-spacing:0.06em;color:var(--t3);}
+
+/* ── CTA FINAL ── */
+#cta-final{
+  text-align:center;
+  max-width:720px;margin:0 auto;
+  padding-bottom:clamp(80px,14vw,160px);
+}
+.cta-title{
+  font-family:var(--serif);font-size:clamp(40px,7vw,88px);
+  font-weight:400;line-height:1;letter-spacing:-0.02em;
+  margin-bottom:24px;
+}
+.cta-title em{color:var(--t2);}
+.cta-sub{font-size:clamp(13px,1.5vw,16px);font-weight:200;color:var(--t2);line-height:1.8;margin-bottom:44px;}
+.cta-actions{display:flex;flex-direction:column;align-items:center;gap:14px;}
+.cta-note{font-family:var(--mono);font-size:8px;letter-spacing:0.14em;color:var(--t3);text-transform:uppercase;}
+
+/* ── FOOTER ── */
+footer{
+  border-top:1px solid rgba(245,240,235,0.05);
+  padding:40px clamp(24px,5vw,72px);
+  display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:16px;
+}
+.footer-logo{font-family:var(--mono);font-size:10px;letter-spacing:0.32em;color:var(--t3);}
+.footer-links{display:flex;gap:28px;}
+.footer-links a{font-family:var(--mono);font-size:8px;letter-spacing:0.14em;color:var(--t4);text-decoration:none;text-transform:uppercase;transition:color 0.2s;}
+.footer-links a:hover{color:var(--t2);}
+.footer-copy{font-family:var(--mono);font-size:8px;letter-spacing:0.1em;color:var(--t4);}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  #manifesto{grid-template-columns:1fr;gap:48px;}
+  .features-grid{grid-template-columns:1fr 1fr;}
+  .showcase-inner{grid-template-columns:1fr;gap:40px;}
+  .showcase-inner.reverse{direction:ltr;}
+  .pricing-cards{grid-template-columns:1fr;}
+  .test-grid{grid-template-columns:1fr;}
+  nav .nav-links{display:none;}
+}
+@media(max-width:600px){
+  .features-grid{grid-template-columns:1fr;}
+  .manifesto-stats{flex-wrap:wrap;gap:24px;}
+}
+
+/* ── HORIZONTAL MARQUEE ── */
+.marquee-wrap{overflow:hidden;border-top:1px solid rgba(245,240,235,0.04);border-bottom:1px solid rgba(245,240,235,0.04);padding:18px 0;}
+.marquee-track{display:flex;gap:0;animation:marquee 28s linear infinite;width:max-content;}
+.marquee-item{
+  font-family:var(--mono);font-size:9px;letter-spacing:0.24em;
+  color:var(--t3);text-transform:uppercase;
+  padding:0 40px;white-space:nowrap;
+  border-right:1px solid rgba(245,240,235,0.05);
+}
+.marquee-item span{color:var(--gold);margin-right:6px;}
+@keyframes marquee{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+
+/* ── CURSOR GLOW ── */
+.cursor-glow{
+  position:fixed;width:400px;height:400px;pointer-events:none;z-index:0;
+  background:radial-gradient(ellipse at center,rgba(210,180,120,0.03) 0%,transparent 70%);
+  border-radius:50%;transform:translate(-50%,-50%);
+  transition:left 0.15s ease,top 0.15s ease;
+  mix-blend-mode:screen;
+}
+</style>
+</head>
+<body>
+
+<!-- CURSOR GLOW -->
+<div class="cursor-glow" id="cursorGlow"></div>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="#" class="nav-logo">AVANCE</a>
+  <div class="nav-links">
+    <a href="#features">Funcionalidades</a>
+    <a href="#showcase">Módulos</a>
+    <a href="#pricing">Planos</a>
+  </div>
+  <a href="#cta-final" class="nav-cta">Começar agora</a>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+
+  <p class="hero-eyebrow">Seu sistema de evolução</p>
+  <h1 class="hero-title">Evolua com<br>intencionalidade</h1>
+  
+  <div class="hero-actions">
+    <a href="#cta-final" class="btn-primary">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5.5" stroke="currentColor" stroke-width="1"/><path d="M4.5 6h3M6 4.5v3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+      Começar gratuitamente
+    </a>
+    <a href="#features" class="btn-ghost">Ver como funciona</a>
+  </div>
+
+  <div class="hero-device">
+    <div class="hero-device-frame">
+      <div class="device-screen">
+        <div class="dm-header">
+          <span class="dm-logo">AVANCE</span>
+          <div class="dm-ring"></div>
+        </div>
+        <div class="dm-greeting">Olá, Victor</div>
+        <div class="dm-sub">bom dia — quarta-feira</div>
+        <div class="dm-section-lbl">hábitos de hoje</div>
+        <div class="dm-hab-row">
+          <div class="dm-circle done" style="background:#4ade80;border-color:#4ade80;"><span style="font-size:7px">✓</span></div>
+          <div class="dm-hab-name">Meditação</div>
+          <div class="dm-hab-meta">🔥 14d</div>
+        </div>
+        <div class="dm-hab-row">
+          <div class="dm-circle done" style="background:#a78bfa;border-color:#a78bfa;"><span style="font-size:7px">✓</span></div>
+          <div class="dm-hab-name">Leitura</div>
+          <div class="dm-hab-meta">🔥 7d</div>
+        </div>
+        <div class="dm-hab-row">
+          <div class="dm-circle" style="border-color:#f87171;"></div>
+          <div class="dm-hab-name">Exercício</div>
+          <div class="dm-hab-meta">🔥 3d</div>
+        </div>
+        <div class="dm-divider"></div>
+        <div class="dm-fin-row">
+          <div class="dm-fin-lbl">saldo do mês</div>
+          <div class="dm-fin-val">R$ 2,4k</div>
+        </div>
+        <div class="dm-bar"><div class="dm-bar-fill"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="scroll-hint">
+    <span>rolar</span>
+    <div class="scroll-arrow"></div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-wrap">
+  <div class="marquee-track" id="mTrack">
+    <div class="marquee-item"><span>○</span> Hábitos Diários</div>
+    <div class="marquee-item"><span>□</span> Gestão de Tarefas</div>
+    <div class="marquee-item"><span>◇</span> Controle Financeiro</div>
+    <div class="marquee-item"><span>△</span> Treinos Personalizados</div>
+    <div class="marquee-item"><span>◫</span> Registro de Estudos</div>
+    <div class="marquee-item"><span>∿</span> Estatísticas Avançadas</div>
+    <div class="marquee-item"><span>◎</span> Dashboard Inteligente</div>
+    <div class="marquee-item"><span>○</span> Hábitos Diários</div>
+    <div class="marquee-item"><span>□</span> Gestão de Tarefas</div>
+    <div class="marquee-item"><span>◇</span> Controle Financeiro</div>
+    <div class="marquee-item"><span>△</span> Treinos Personalizados</div>
+    <div class="marquee-item"><span>◫</span> Registro de Estudos</div>
+    <div class="marquee-item"><span>∿</span> Estatísticas Avançadas</div>
+    <div class="marquee-item"><span>◎</span> Dashboard Inteligente</div>
+  </div>
+</div>
+
+<!-- MANIFESTO -->
+<section>
+  <div id="manifesto">
+    <div class="manifesto-left">
+      <div class="sec-label reveal">A filosofia</div>
+      <h2 class="manifesto-title reveal reveal-delay-1">Não é um app.<br>É um <em>sistema</em>.</h2>
+      <p class="manifesto-text reveal reveal-delay-2">
+        O Avance foi construído para que cada olhar na tela seja intencional e revelador.
+      </p>
+      
+      <div class="manifesto-stats reveal reveal-delay-3">
+        <div class="stat-item">
+          <div class="stat-num">7</div>
+          <div class="stat-lbl">módulos integrados</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">0</div>
+          <div class="stat-lbl">distrações</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">∞</div>
+          <div class="stat-lbl">possibilidades</div>
+        </div>
+      </div>
+    </div>
+    <div class="manifesto-right reveal reveal-delay-2">
+      <div class="manifesto-card">
+        <div class="mc-line">
+          <div class="mc-icon">○</div>
+          <div class="mc-info">
+            <div class="mc-name">Meditação matinal</div>
+            <div class="mc-meta">🔥 21 dias consecutivos</div>
+          </div>
+          <div class="mc-val fire">21d</div>
+        </div>
+        <div class="mc-line">
+          <div class="mc-icon">□</div>
+          <div class="mc-info">
+            <div class="mc-name">Enviar relatório Q2</div>
+            <div class="mc-meta">alta prioridade · hoje</div>
+          </div>
+          <div class="mc-val" style="color:rgba(255,180,60,0.75)">urgente</div>
+        </div>
+        <div class="mc-line">
+          <div class="mc-icon">◇</div>
+          <div class="mc-info">
+            <div class="mc-name">Receita do mês</div>
+            <div class="mc-meta">últimos 30 dias</div>
+          </div>
+          <div class="mc-val pos">+R$ 4,8k</div>
+        </div>
+        <div class="mc-line">
+          <div class="mc-icon">△</div>
+          <div class="mc-info">
+            <div class="mc-name">Treino A — Peito</div>
+            <div class="mc-meta">4 exercícios · concluído hoje</div>
+          </div>
+          <div class="mc-val" style="color:rgba(100,220,140,0.7)">✓</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="features-header">
+    <div class="sec-label reveal" style="justify-content:center"><span style="width:28px;height:1px;background:var(--gold);display:block;"></span>Funcionalidades</div>
+    <h2 class="features-title reveal reveal-delay-1">Tudo que você precisa</h2>
+    
+  </div>
+  <div class="features-grid reveal reveal-delay-1">
+    <div class="feat-card">
+      <div class="feat-icon">○</div>
+      <h3 class="feat-title">Hábitos com inteligência</h3>
+      <p class="feat-desc">Marcar, sequência com meta diária, ou mau hábito. Calendário e gráfico de consistência.</p>
+      <span class="feat-tag">streak · meta · histórico</span>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">□</div>
+      <h3 class="feat-title">Tarefas sem burocracia</h3>
+      <p class="feat-desc">Crie, priorize e organize com um toque. Drag & drop, filtros por tag, data limite e notificações nativas — tudo no seu horário.</p>
+      <span class="feat-tag">prioridade · prazo · notificação</span>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">◇</div>
+      <h3 class="feat-title">Finanças claras</h3>
+      <p class="feat-desc">Veja receita, saídas e economia em segundos. Filtros por semana, mês ou ano. Categorias visuais e gráfico de evolução animado.</p>
+      <span class="feat-tag">receita · categorias · metas</span>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">△</div>
+      <h3 class="feat-title">Treino no seu ritmo</h3>
+      <p class="feat-desc">Crie fichas personalizadas por dia da semana. Inicie o treino, marque as séries concluídas e acompanhe seu progresso semana a semana.</p>
+      <span class="feat-tag">fichas · séries · conclusão</span>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">◫</div>
+      <h3 class="feat-title">Estudos em breve</h3>
+      <p class="feat-desc">Um módulo dedicado para registrar sessões de estudo, acompanhar materiais e medir seu progresso de aprendizado.</p>
+      <span class="feat-tag">em breve</span>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">∿</div>
+      <h3 class="feat-title">Estatísticas reveladoras</h3>
+      <p class="feat-desc">Gráficos de linha suaves com filtros por semana, mês e ano. Veja padrões, identifique pontos de melhora e celebre conquistas.</p>
+      <span class="feat-tag">semana · mês · ano</span>
+    </div>
+  </div>
+</section>
+
+<!-- SHOWCASE 1 — HÁBITOS -->
+<section id="showcase" style="padding:0;">
+  <div class="showcase-inner">
+    <div class="showcase-text">
+      <div class="sec-label reveal">Hábitos</div>
+      <h2 class="showcase-title reveal reveal-delay-1">Construa sequências</h2>
+      <p class="showcase-desc reveal reveal-delay-2">Cada hábito tem seu próprio ritmo. Marcar, contar ou resistir — o sistema se adapta ao seu objetivo, não o contrário.</p>
+      <div class="showcase-pills reveal reveal-delay-3">
+        <span class="showcase-pill">marcar ✓</span>
+        <span class="showcase-pill">sequência 🔥</span>
+        <span class="showcase-pill">mau hábito ✗</span>
+        <span class="showcase-pill">calendário mensal</span>
+        <span class="showcase-pill">gráfico 28 dias</span>
+      </div>
+    </div>
+    <div class="reveal reveal-delay-2">
+      <div class="mock-panel">
+        <div class="mock-topbar">
+          <div class="mock-dot" style="background:#3a3a3a"></div>
+          <div class="mock-dot" style="background:#3a3a3a"></div>
+          <div class="mock-dot" style="background:#3a3a3a"></div>
+        </div>
+        <div class="mock-content">
+          <div class="mock-section-lbl">hábitos</div>
+          <div class="mock-hab">
+            <div class="mock-chk" style="background:#4ade80;border-color:#4ade80;">✓</div>
+            <div class="mock-hab-body">
+              <div class="mock-hab-name">Meditação</div>
+              <div class="mock-hab-meta">#mente</div>
+            </div>
+            <div class="mock-streak">🔥 21d</div>
+          </div>
+          <div class="mock-hab">
+            <div class="mock-chk" style="background:#a78bfa;border-color:#a78bfa;">✓</div>
+            <div class="mock-hab-body">
+              <div class="mock-hab-name">Leitura — 2/3</div>
+              <div class="mock-hab-meta">#estudo · 🔥 8d · 2/3</div>
+            </div>
+            <div class="mock-streak">sequência</div>
+          </div>
+          <div class="mock-hab">
+            <div class="mock-chk" style="border-color:#f87171;background:rgba(248,113,113,0.1);"></div>
+            <div class="mock-hab-body">
+              <div class="mock-hab-name">Redes sociais</div>
+              <div class="mock-hab-meta">mau hábito · 🔥 5d · ✗ 0</div>
+            </div>
+            <div class="mock-streak" style="color:rgba(100,220,140,0.7)">resistido</div>
+          </div>
+          <div class="mock-hab" style="opacity:0.4">
+            <div class="mock-chk" style="border-color:rgba(245,240,235,0.15);"></div>
+            <div class="mock-hab-body">
+              <div class="mock-hab-name">Exercício</div>
+              <div class="mock-hab-meta">#saúde · 🔥 3d</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SHOWCASE 2 — FINANÇAS -->
+  <div class="showcase-inner reverse" style="background:rgba(245,240,235,0.008);">
+    <div class="showcase-text">
+      <div class="sec-label reveal">Finanças</div>
+      <h2 class="showcase-title reveal reveal-delay-1">Clareza financeira</h2>
+      <p class="showcase-desc reveal reveal-delay-2">Entradas, saídas, categorias e metas. Tudo filtrado por semana, mês ou ano.</p>
+      <div class="showcase-pills reveal reveal-delay-3">
+        <span class="showcase-pill">semana · mês · ano</span>
+        <span class="showcase-pill">categorias visuais</span>
+        <span class="showcase-pill">metas financeiras</span>
+        <span class="showcase-pill">animação ao entrar</span>
+      </div>
+    </div>
+    <div class="reveal reveal-delay-2">
+      <div class="mock-panel">
+        <div class="mock-topbar">
+          <div class="mock-dot" style="background:#3a3a3a"></div>
+          <div class="mock-dot" style="background:#3a3a3a"></div>
+          <div class="mock-dot" style="background:#3a3a3a"></div>
+        </div>
+        <div class="mock-fin-hero">
+          <div class="mock-fin-lbl-sm">total · último mês</div>
+          <div class="mock-fin-big">R$ 2.480</div>
+        </div>
+        <div class="mock-fin-row">
+          <div>
+            <div class="mock-fin-item-lbl">receita</div>
+            <div class="mock-fin-item-val g">R$ 4,8k</div>
+          </div>
+          <div style="text-align:right">
+            <div class="mock-fin-item-lbl">economia</div>
+            <div class="mock-fin-item-val" style="color:rgba(245,240,235,0.6)">51%</div>
+          </div>
+        </div>
+        <div style="padding:16px 20px 8px;">
+          <div class="mock-fin-lbl-sm" style="margin-bottom:14px">por categoria</div>
+          <div class="mock-cat-row">
+            <div class="mock-cat-dot" style="background:#4ecb71"></div>
+            <div class="mock-cat-name">Alimentação</div>
+            <div class="mock-cat-bar"><div class="mock-cat-fill" style="width:68%;background:#4ecb71;opacity:0.7;"></div></div>
+            <div class="mock-cat-pct">68%</div>
+          </div>
+          <div class="mock-cat-row">
+            <div class="mock-cat-dot" style="background:#a78bfa"></div>
+            <div class="mock-cat-name">Assinaturas</div>
+            <div class="mock-cat-bar"><div class="mock-cat-fill" style="width:18%;background:#a78bfa;opacity:0.7;"></div></div>
+            <div class="mock-cat-pct">18%</div>
+          </div>
+          <div class="mock-cat-row">
+            <div class="mock-cat-dot" style="background:#38bdf8"></div>
+            <div class="mock-cat-name">Compras</div>
+            <div class="mock-cat-bar"><div class="mock-cat-fill" style="width:14%;background:#38bdf8;opacity:0.7;"></div></div>
+            <div class="mock-cat-pct">14%</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SHOWCASE 3 — TREINO -->
+  <div class="showcase-inner">
+    <div class="showcase-text">
+      <div class="sec-label reveal">Treino</div>
+      <h2 class="showcase-title reveal reveal-delay-1">Treino estruturado</h2>
+      <p class="showcase-desc reveal reveal-delay-2">Fichas por dia da semana. Inicie o treino e marque cada série concluída.</p>
+      <div class="showcase-pills reveal reveal-delay-3">
+        <span class="showcase-pill">fichas por dia</span>
+        <span class="showcase-pill">modo treino</span>
+        <span class="showcase-pill">séries por exercício</span>
+        <span class="showcase-pill">conclusão diária</span>
+      </div>
+    </div>
+    <div class="reveal reveal-delay-2">
+      <div class="mock-panel">
+        <div class="mock-topbar">
+          <div class="mock-dot" style="background:#3a3a3a"></div>
+          <div class="mock-dot" style="background:#3a3a3a"></div>
+          <div class="mock-dot" style="background:#3a3a3a"></div>
+        </div>
+        <div class="mock-treino-day-row">
+          <div class="mock-tr-day"><div class="mock-tr-day-lbl">seg</div><div class="mock-tr-day-dot" style="background:rgba(100,220,140,0.7)"></div></div>
+          <div class="mock-tr-day"><div class="mock-tr-day-lbl">ter</div><div class="mock-tr-day-dot" style="background:rgba(100,220,140,0.7)"></div></div>
+          <div class="mock-tr-day sel"><div class="mock-tr-day-lbl">qua</div><div class="mock-tr-day-dot"></div></div>
+          <div class="mock-tr-day"><div class="mock-tr-day-lbl">qui</div><div class="mock-tr-day-dot"></div></div>
+          <div class="mock-tr-day"><div class="mock-tr-day-lbl">sex</div><div class="mock-tr-day-dot"></div></div>
+          <div class="mock-tr-day"><div class="mock-tr-day-lbl">sáb</div><div class="mock-tr-day-dot"></div></div>
+          <div class="mock-tr-day"><div class="mock-tr-day-lbl">dom</div><div class="mock-tr-day-dot"></div></div>
+        </div>
+        <div class="mock-content" style="padding-top:0">
+          <div class="mock-ficha">
+            <div class="mock-ficha-badge done">✓</div>
+            <div class="mock-ficha-info">
+              <div class="mock-ficha-name">Peito + Tríceps</div>
+              <div class="mock-ficha-meta" style="color:rgba(100,220,140,0.6)">concluído hoje</div>
+            </div>
+          </div>
+          <div class="mock-ficha">
+            <div class="mock-ficha-badge">B</div>
+            <div class="mock-ficha-info">
+              <div class="mock-ficha-name">Costas + Bíceps</div>
+              <div class="mock-ficha-meta">5 exercícios</div>
+            </div>
+          </div>
+          <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap;">
+            <div style="padding:10px 14px;border-radius:10px;border:1px solid rgba(245,240,235,0.1);background:rgba(245,240,235,0.03);font-family:var(--mono);font-size:9px;color:rgba(245,240,235,0.3);">8 reps</div>
+            <div style="padding:10px 14px;border-radius:10px;border:1px solid rgba(245,240,235,0.22);background:rgba(245,240,235,0.08);font-family:var(--mono);font-size:9px;color:rgba(245,240,235,0.8);">8 reps</div>
+            <div style="padding:10px 14px;border-radius:10px;border:1px solid rgba(245,240,235,0.1);background:rgba(245,240,235,0.03);font-family:var(--mono);font-size:9px;color:rgba(245,240,235,0.3);">8 reps</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing">
+  <div class="pricing-header">
+    <div class="sec-label reveal">Planos</div>
+    <h2 class="pricing-title reveal reveal-delay-1">Simples e <em>transparente</em></h2>
+    
+  </div>
+  <div class="pricing-cards reveal reveal-delay-1">
+    <div class="pricing-card">
+      <span class="pricing-badge badge-free">Grátis</span>
+      <div class="pricing-price">R$<sup></sup>0<sub>/mês</sub></div>
+      <div class="pricing-period">para sempre</div>
+      <div class="pricing-divider"></div>
+      <div class="pricing-feature included">Hábitos ilimitados</div>
+      <div class="pricing-feature included">Tarefas ilimitadas</div>
+      <div class="pricing-feature included">Módulo de finanças</div>
+      <div class="pricing-feature included">Dashboard</div>
+      <div class="pricing-feature">Treino avançado</div>
+      <div class="pricing-feature">Estatísticas completas</div>
+      <div class="pricing-feature">Sync entre dispositivos</div>
+      <a href="#" class="pricing-btn btn-pricefree">Começar grátis</a>
+    </div>
+    <div class="pricing-card featured">
+      <span class="pricing-badge badge-pro">Pro</span>
+      <div class="pricing-price"><sup>R$</sup>14<sub>/mês</sub></div>
+      <div class="pricing-period">cobrado mensalmente</div>
+      <div class="pricing-divider"></div>
+      <div class="pricing-feature included">Tudo do plano grátis</div>
+      <div class="pricing-feature included">Módulo de Treino completo</div>
+      <div class="pricing-feature included">Módulo de Estudos</div>
+      <div class="pricing-feature included">Estatísticas avançadas</div>
+      <div class="pricing-feature included">Notificações inteligentes</div>
+      <div class="pricing-feature included">Sync entre dispositivos</div>
+      <div class="pricing-feature">Suporte prioritário</div>
+      <a href="#" class="pricing-btn btn-pricepro">Assinar Pro</a>
+    </div>
+    <div class="pricing-card">
+      <span class="pricing-badge badge-yearly">Anual</span>
+      <div class="pricing-price"><sup>R$</sup>9<sub>/mês</sub></div>
+      <div class="pricing-period">R$ 108 cobrado anualmente · economize 36%</div>
+      <div class="pricing-divider"></div>
+      <div class="pricing-feature included">Tudo do Pro</div>
+      <div class="pricing-feature included">Suporte prioritário</div>
+      <div class="pricing-feature included">Acesso antecipado a novos módulos</div>
+      <div class="pricing-feature included">Badge exclusivo de membro fundador</div>
+      <div class="pricing-feature included">Feedback direto no roadmap</div>
+      <div class="pricing-feature included">Desconto vitalício garantido</div>
+      <a href="#" class="pricing-btn btn-priceyear">Assinar Anual</a>
+    </div>
+  </div>
+</section>
+
+
+
+<!-- CTA FINAL -->
+<section>
+  <div id="cta-final">
+    <div class="sec-label reveal" style="justify-content:center"><span style="display:block;width:28px;height:1px;background:var(--gold);"></span>Comece hoje</div>
+    <h2 class="cta-title reveal reveal-delay-1">Sua melhor versão</h2>
+    <p class="cta-sub reveal reveal-delay-2">Um sistema minimalista para evoluir. Sem ruído.</p>
+    <div class="cta-actions reveal reveal-delay-3">
+      <a href="#" class="btn-primary" style="font-size:11px;padding:17px 44px;">
+        Começar gratuitamente — agora
+      </a>
+      <p class="cta-note">sem cartão de crédito · começa em 30 segundos</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">AVANCE</div>
+  <div class="footer-links">
+    <a href="#">Privacidade</a>
+    <a href="#">Termos</a>
+    <a href="#">Contato</a>
+    <a href="#">Roadmap</a>
+  </div>
+  <div class="footer-copy">© 2026 Avance. Todos os direitos reservados.</div>
+</footer>
+
+<script>
+// Nav scroll
+const nav=document.getElementById('nav');
+window.addEventListener('scroll',()=>{nav.classList.toggle('scrolled',window.scrollY>40);});
+
+// Reveal on scroll
+const reveals=document.querySelectorAll('.reveal');
+const io=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');});
+},{threshold:0.12});
+reveals.forEach(r=>io.observe(r));
+
+// Cursor glow
+const glow=document.getElementById('cursorGlow');
+document.addEventListener('mousemove',e=>{
+  glow.style.left=e.clientX+'px';
+  glow.style.top=e.clientY+'px';
+});
+
+// Marquee clone for seamless loop
+const track=document.getElementById('mTrack');
+track.innerHTML+=track.innerHTML;
+</script>
+</body>
+</html>
