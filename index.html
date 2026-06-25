@@ -617,13 +617,7 @@ footer{
   <p class="hero-eyebrow">Seu sistema de evolução</p>
   <h1 class="hero-title">Evolua com<br>intencionalidade</h1>
   
-  <div class="hero-actions">
-    <a href="#cta-final" class="btn-primary">
-      <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5.5" stroke="currentColor" stroke-width="1"/><path d="M4.5 6h3M6 4.5v3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
-      Começar gratuitamente
-    </a>
-    <a href="#features" class="btn-ghost">Ver como funciona</a>
-  </div>
+  <a href="#features" class="btn-ghost">Ver como funciona</a>
 
   <div class="hero-device">
     <div class="hero-device-frame">
@@ -784,9 +778,15 @@ footer{
     </div>
     <div class="feat-card">
       <div class="feat-icon">◫</div>
-      <h3 class="feat-title">Estudos em breve</h3>
-      <p class="feat-desc">Um módulo dedicado para registrar sessões de estudo, acompanhar materiais e medir seu progresso de aprendizado.</p>
-      <span class="feat-tag">em breve</span>
+      <h3 class="feat-title">Estudos com foco</h3>
+      <p class="feat-desc">Registre sessões com cronômetro, organize anotações por matéria e acompanhe seu progresso com mapa de calor e meta diária.</p>
+      <span class="feat-tag">timer · anotações · heatmap</span>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">⬡</div>
+      <h3 class="feat-title">Plano Mental</h3>
+      <p class="feat-desc">Canvas visual infinito para conectar hábitos, tarefas e ideias em nós. Arraste, conecte e organize seu pensamento em espaço livre.</p>
+      <span class="feat-tag">canvas · nós · conexões</span>
     </div>
     <div class="feat-card">
       <div class="feat-icon">∿</div>
@@ -971,6 +971,61 @@ footer{
   </div>
 </section>
 
+  <!-- SHOWCASE 4 — PLANO MENTAL -->
+  <div class="showcase-inner" style="background:rgba(167,139,250,0.03);">
+    <div class="showcase-text">
+      <div class="sec-label reveal">Plano Mental</div>
+      <h2 class="showcase-title reveal reveal-delay-1">Pense em espaço livre</h2>
+      <p class="showcase-desc reveal reveal-delay-2">Um canvas infinito para mapear ideias, conectar objetivos e visualizar seu sistema de evolução de forma não linear.</p>
+      <div class="showcase-pills reveal reveal-delay-3">
+        <span class="showcase-pill">canvas infinito</span>
+        <span class="showcase-pill">blocos conectados</span>
+        <span class="showcase-pill">etapas e tarefas</span>
+        <span class="showcase-pill">temporizador</span>
+        <span class="showcase-pill">pan · zoom</span>
+      </div>
+    </div>
+    <div class="reveal reveal-delay-2">
+      <div class="mock-panel">
+        <div class="mock-topbar">
+          <div class="mock-dot" style="background:#3a3a3a"></div>
+          <div class="mock-dot" style="background:#3a3a3a"></div>
+          <div class="mock-dot" style="background:#3a3a3a"></div>
+        </div>
+        <div class="mock-content" style="padding:16px;position:relative;min-height:180px;background:rgba(10,10,14,0.6);">
+          <!-- nó 1 -->
+          <div style="position:absolute;left:12px;top:14px;background:rgba(167,139,250,0.12);border:1px solid rgba(167,139,250,0.25);border-radius:10px;padding:10px 12px;width:130px;">
+            <div style="font-size:9px;font-weight:600;color:rgba(245,240,235,0.8);margin-bottom:4px;">Lançar AVANCE</div>
+            <div style="font-size:8px;color:rgba(245,240,235,0.3);">projeto principal</div>
+          </div>
+          <!-- nó 2 — etapas -->
+          <div style="position:absolute;left:16px;top:90px;background:rgba(245,240,235,0.04);border:1px solid rgba(245,240,235,0.1);border-radius:10px;padding:10px 12px;width:130px;">
+            <div style="font-size:9px;font-weight:600;color:rgba(245,240,235,0.7);margin-bottom:6px;">Landing page</div>
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+              <div style="width:10px;height:10px;border-radius:50%;background:rgba(100,220,140,0.7);flex-shrink:0;"></div>
+              <div style="font-size:8px;color:rgba(245,240,235,0.45);text-decoration:line-through;">Design</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:6px;">
+              <div style="width:10px;height:10px;border-radius:50%;border:1px solid rgba(245,240,235,0.2);flex-shrink:0;"></div>
+              <div style="font-size:8px;color:rgba(245,240,235,0.6);">Publicar</div>
+            </div>
+          </div>
+          <!-- nó 3 — timer -->
+          <div style="position:absolute;right:12px;top:20px;background:rgba(245,240,235,0.04);border:1px solid rgba(245,240,235,0.1);border-radius:10px;padding:10px 12px;width:100px;text-align:center;">
+            <div style="font-size:8px;color:rgba(245,240,235,0.35);margin-bottom:4px;">foco</div>
+            <div style="font-family:monospace;font-size:18px;font-weight:700;color:rgba(167,139,250,0.9);">25:00</div>
+            <div style="font-size:8px;color:rgba(245,240,235,0.3);margin-top:4px;">regressivo</div>
+          </div>
+          <!-- linha de conexão SVG -->
+          <svg style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;" viewBox="0 0 260 200">
+            <path d="M 142 40 C 170 40 160 105 155 105" stroke="rgba(167,139,250,0.3)" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+            <path d="M 76 60 C 76 70 76 84 76 90" stroke="rgba(245,240,235,0.15)" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
 <!-- PRICING -->
 <section id="pricing">
   <div class="pricing-header">
@@ -991,11 +1046,11 @@ footer{
       <div class="pricing-feature">Treino avançado</div>
       <div class="pricing-feature">Estatísticas completas</div>
       <div class="pricing-feature">Sync entre dispositivos</div>
-      <a href="#" class="pricing-btn btn-pricefree">Começar grátis</a>
+      <a href="http://app.avanceos.com" class="pricing-btn btn-pricefree" target="_blank">Começar grátis</a>
     </div>
     <div class="pricing-card featured">
       <span class="pricing-badge badge-pro">Pro</span>
-      <div class="pricing-price"><sup>R$</sup>14<sub>/mês</sub></div>
+      <div class="pricing-price"><sup>R$</sup>23,99<sub>/mês</sub></div>
       <div class="pricing-period">cobrado mensalmente</div>
       <div class="pricing-divider"></div>
       <div class="pricing-feature included">Tudo do plano grátis</div>
@@ -1005,12 +1060,12 @@ footer{
       <div class="pricing-feature included">Notificações inteligentes</div>
       <div class="pricing-feature included">Sync entre dispositivos</div>
       <div class="pricing-feature">Suporte prioritário</div>
-      <a href="#" class="pricing-btn btn-pricepro">Assinar Pro</a>
+      <a href="https://pay.cakto.com.br/oeug675_936382" class="pricing-btn btn-pricepro" target="_blank">Assinar Pro</a>
     </div>
     <div class="pricing-card">
       <span class="pricing-badge badge-yearly">Anual</span>
-      <div class="pricing-price"><sup>R$</sup>9<sub>/mês</sub></div>
-      <div class="pricing-period">R$ 108 cobrado anualmente · economize 36%</div>
+      <div class="pricing-price"><sup>R$</sup>14,99<sub>/mês</sub></div>
+      <div class="pricing-period">R$ 179,88 cobrado anualmente · economize 37%</div>
       <div class="pricing-divider"></div>
       <div class="pricing-feature included">Tudo do Pro</div>
       <div class="pricing-feature included">Suporte prioritário</div>
@@ -1018,7 +1073,7 @@ footer{
       <div class="pricing-feature included">Badge exclusivo de membro fundador</div>
       <div class="pricing-feature included">Feedback direto no roadmap</div>
       <div class="pricing-feature included">Desconto vitalício garantido</div>
-      <a href="#" class="pricing-btn btn-priceyear">Assinar Anual</a>
+      <a href="https://pay.cakto.com.br/oeug675_936382" class="pricing-btn btn-priceyear" target="_blank">Assinar Anual</a>
     </div>
   </div>
 </section>
@@ -1032,7 +1087,7 @@ footer{
     <h2 class="cta-title reveal reveal-delay-1">Sua melhor versão</h2>
     <p class="cta-sub reveal reveal-delay-2">Um sistema minimalista para evoluir. Sem ruído.</p>
     <div class="cta-actions reveal reveal-delay-3">
-      <a href="#" class="btn-primary" style="font-size:11px;padding:17px 44px;">
+      <a href="http://app.avanceos.com" class="btn-primary" target="_blank" style="font-size:11px;padding:17px 44px;">
         Começar gratuitamente — agora
       </a>
       <p class="cta-note">sem cartão de crédito · começa em 30 segundos</p>
