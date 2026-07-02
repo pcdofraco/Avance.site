@@ -1347,48 +1347,46 @@ footer{
 
     <!-- Phone CENTER: Plano Mental com dot grid + nodes -->
     <div class="pw pw-center">
-      <div class="pf pf-lg">
+      <div class="pf pf-md">
         <div class="pscreen" style="position:relative;">
           <div class="pnotch"></div>
           <div class="pbar">
             <div class="pbar-brand"><div class="pbar-title">AVANCE</div><div class="pbar-sub">seu sistema de evolução</div></div>
             <div class="pbar-bell">🔔</div>
           </div>
-          <!-- dot grid background -->
+          <!-- dot grid -->
           <div class="pmental-bg">
             <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-              <pattern id="dotgrid" x="0" y="0" width="16" height="16" patternUnits="userSpaceOnUse">
-                <circle cx="8" cy="8" r="0.8" fill="rgba(255,255,255,0.12)"/>
+              <pattern id="dotgrid" x="0" y="0" width="14" height="14" patternUnits="userSpaceOnUse">
+                <circle cx="7" cy="7" r="0.7" fill="rgba(255,255,255,0.12)"/>
               </pattern>
               <rect width="100%" height="100%" fill="url(#dotgrid)"/>
             </svg>
           </div>
-          <!-- connector SVG -->
-          <svg style="position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none;" viewBox="0 0 210 410">
-            <!-- Meta → Hábitos curve -->
-            <path d="M 138 168 C 175 168 148 220 185 240" fill="none" stroke="#4ade80" stroke-width="1.5"/>
-            <circle cx="138" cy="168" r="3" fill="#4ade80"/>
-            <circle cx="168" cy="212" r="3" fill="#4ade80"/>
-            <circle cx="185" cy="240" r="3" fill="#4ade80"/>
+          <!-- connector SVG — viewBox matches pscreen 190x410, nodes: Meta right=(112,155) Hábitos left=(92,243) -->
+          <svg style="position:absolute;inset:0;width:100%;height:100%;z-index:2;pointer-events:none;" viewBox="0 0 190 410" preserveAspectRatio="none">
+            <path d="M 112,155 C 150,155 55,243 92,243" fill="none" stroke="#4ade80" stroke-width="1.5"/>
+            <circle cx="112" cy="155" r="3" fill="#4ade80"/>
+            <circle cx="92"  cy="243" r="3" fill="#4ade80"/>
           </svg>
           <!-- nodes -->
           <div class="pmental-content">
-            <!-- Meta node -->
-            <div class="pnode" style="top:120px;left:24px;width:110px;">
-              <div style="width:24px;height:2px;background:rgba(255,255,255,0.2);border-radius:1px;margin-bottom:6px;"></div>
+            <!-- Meta: top=105 left=12 width=100 → right edge x=112, mid-y=105+50/2=130 → in viewBox y=130 -->
+            <div class="pnode" style="top:105px;left:12px;width:100px;">
+              <div style="width:18px;height:2px;background:rgba(255,255,255,0.2);border-radius:1px;margin-bottom:4px;"></div>
               <div class="pnode-title">Meta</div>
               <div class="pnode-body">Concluir todos os Hábitos</div>
             </div>
-            <!-- Hábitos node (blue) -->
-            <div class="pnode blue" style="top:220px;right:10px;width:100px;">
-              <div style="width:20px;height:2px;background:rgba(255,255,255,0.3);border-radius:1px;margin-bottom:5px;"></div>
+            <!-- Hábitos: top=195 right=8 width=90 → left edge x=190-8-90=92, mid-y=195+48/2=219 → viewBox y=219 -->
+            <div class="pnode blue" style="top:195px;right:8px;width:90px;">
+              <div style="width:16px;height:2px;background:rgba(255,255,255,0.3);border-radius:1px;margin-bottom:4px;"></div>
               <div class="pnode-title">Hábitos</div>
               <div class="pnode-item"><div class="pnode-item-circle"></div><span class="pnode-item-text">Orar</span></div>
               <div class="pnode-item"><div class="pnode-item-circle"></div><span class="pnode-item-text">Arrumar quarto</span></div>
               <div class="pnode-add">+ adicionar etapa</div>
             </div>
             <!-- Menu popup -->
-            <div class="pnode-menu" style="top:290px;left:28px;width:105px;">
+            <div class="pnode-menu" style="top:278px;left:12px;width:108px;">
               <div class="pnode-menu-item">📋 bloco de anotações</div>
               <div class="pnode-menu-item">🔗 bloco de etapas</div>
               <div class="pnode-menu-item">⏱ bloco de temporizador</div>
