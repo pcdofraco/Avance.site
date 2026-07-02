@@ -28,8 +28,9 @@
   --sans:'Outfit',sans-serif;
 }
 html{background:var(--bg);scroll-behavior:smooth;}
+#bg3d{position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:0.85;}
 body{
-  background:var(--bg);
+  background:transparent;
   color:var(--t1);
   font-family:var(--sans);
   overflow-x:hidden;
@@ -762,6 +763,9 @@ footer{
 </style>
 </head>
 <body>
+
+<!-- 3D BACKGROUND -->
+<canvas id="bg3d"></canvas>
 
 <!-- CURSOR GLOW -->
 <div class="cursor-glow" id="cursorGlow"></div>
@@ -1561,6 +1565,245 @@ document.addEventListener('mousemove',e=>{
 // Marquee clone for seamless loop
 const track=document.getElementById('mTrack');
 track.innerHTML+=track.innerHTML;
+</script>
+
+<!-- THREE.JS 3D SCROLL SYSTEM -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){
+  if(typeof THREE === 'undefined') return;
+  const canvas = document.getElementById('bg3d');
+  const renderer = new THREE.WebGLRenderer({canvas, alpha:true, antialias:true});
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(innerWidth, innerHeight);
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(60, innerWidth/innerHeight, 0.1, 100);
+  camera.position.z = 7;
+
+  const group = new THREE.Group();
+  scene.add(group);
+
+  // ══════════ PARTICLES ══════════
+  const N = 850;
+
+  // ---- Fase A: nuvem dispersa (hero) ----
+  const scatter = new Float32Array(N*3);
+  for(let i=0;i<N;i++){
+    scatter[i*3]   = (Math.random()-0.5)*16;
+    scatter[i*3+1] = (Math.random()-0.5)*10;
+    scatter[i*3+2] = (Math.random()-0.5)*8;
+  }
+
+  // ---- Fase B: esfera de rede (estilo ícone AVANCE) ----
+  const sphereT = new Float32Array(N*3);
+  for(let i=0;i<N;i++){
+    // pontos distribuídos na superfície de uma esfera com jitter
+    const phi = Math.acos(1 - 2*(i+0.5)/N);
+    const theta = Math.PI * (1 + Math.sqrt(5)) * i;
+    const r = 2.4 + (Math.random()-0.5)*0.35;
+    sphereT[i*3]   = r*Math.sin(phi)*Math.cos(theta);
+    sphereT[i*3+1] = r*Math.cos(phi);
+    sphereT[i*3+2] = r*Math.sin(phi)*Math.sin(theta);
+  }
+
+  // ---- Fase C: grade ondulante (wave) ----
+  const waveT = new Float32Array(N*3);
+  {
+    const cols = 34, rows = Math.ceil(N/cols);
+    for(let i=0;i<N;i++){
+      const cx = i % cols, cy = Math.floor(i/cols);
+      waveT[i*3]   = (cx/(cols-1) - 0.5) * 14;
+      waveT[i*3+1] = (cy/(rows-1) - 0.5) * 8 - 0.5;
+      waveT[i*3+2] = 0;
+    }
+  }
+
+  // ---- Fase D: blocos flutuantes (Plano Mental) ----
+  const blocksT = new Float32Array(N*3);
+  {
+    const centers = [
+      [-3.2, 1.6, -1],[ 3.0, 1.2,  0.5],[-1.4,-1.8,  1],
+      [ 1.8,-1.5, -1.5],[ 0.2, 2.6,  0],[-3.4,-0.6, -0.5],[ 3.4,-0.4, 1.2]
+    ];
+    for(let i=0;i<N;i++){
+      const c = centers[i % centers.length];
+      // pontos nas arestas de um cubo em torno do centro
+      const s = 0.62;
+      const edge = Math.floor(Math.random()*12);
+      const t = Math.random()*2-1;
+      let x=0,y=0,z=0;
+      const E = [
+        [t,-1,-1],[t,1,-1],[t,-1,1],[t,1,1],
+        [-1,t,-1],[1,t,-1],[-1,t,1],[1,t,1],
+        [-1,-1,t],[1,-1,t],[-1,1,t],[1,1,t]
+      ][edge];
+      x=E[0]*s; y=E[1]*s; z=E[2]*s;
+      blocksT[i*3]   = c[0]+x;
+      blocksT[i*3+1] = c[1]+y;
+      blocksT[i*3+2] = c[2]+z;
+    }
+  }
+
+  const posAttr = new Float32Array(N*3);
+  posAttr.set(scatter);
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.BufferAttribute(posAttr, 3));
+  const mat = new THREE.PointsMaterial({
+    color: 0xffffff, size: 0.045, transparent:true, opacity:0.9,
+    blending: THREE.AdditiveBlending, depthWrite:false
+  });
+  const points = new THREE.Points(geo, mat);
+  group.add(points);
+
+  // ══════════ LINHAS DA ESFERA (conexões) ══════════
+  const linePairs = [];
+  for(let i=0;i<N;i+=7){
+    // conecta cada 7º ponto ao vizinho mais próximo na esfera
+    let best=-1, bd=1e9;
+    for(let j=0;j<N;j+=3){
+      if(j===i) continue;
+      const dx=sphereT[i*3]-sphereT[j*3], dy=sphereT[i*3+1]-sphereT[j*3+1], dz=sphereT[i*3+2]-sphereT[j*3+2];
+      const d=dx*dx+dy*dy+dz*dz;
+      if(d<bd && d>0.02){bd=d;best=j;}
+    }
+    if(best>=0 && bd<1.4) linePairs.push([i,best]);
+  }
+  const lineGeo = new THREE.BufferGeometry();
+  const linePos = new Float32Array(linePairs.length*6);
+  lineGeo.setAttribute('position', new THREE.BufferAttribute(linePos,3));
+  const lineMat = new THREE.LineBasicMaterial({color:0x4ade80, transparent:true, opacity:0, blending:THREE.AdditiveBlending, depthWrite:false});
+  const lines = new THREE.LineSegments(lineGeo, lineMat);
+  group.add(lines);
+
+  // ══════════ WIREFRAME DOS BLOCOS ══════════
+  const blockGroup = new THREE.Group();
+  const bcenters = [
+    [-3.2, 1.6, -1],[ 3.0, 1.2,  0.5],[-1.4,-1.8,  1],
+    [ 1.8,-1.5, -1.5],[ 0.2, 2.6,  0],[-3.4,-0.6, -0.5],[ 3.4,-0.4, 1.2]
+  ];
+  const bmat = new THREE.LineBasicMaterial({color:0x4ade80, transparent:true, opacity:0, depthWrite:false});
+  const bmatW = new THREE.LineBasicMaterial({color:0xffffff, transparent:true, opacity:0, depthWrite:false});
+  bcenters.forEach((c,idx)=>{
+    const g = new THREE.EdgesGeometry(new THREE.BoxGeometry(1.24,1.24,1.24));
+    const m = new THREE.LineSegments(g, idx%2===0 ? bmat : bmatW);
+    m.position.set(c[0],c[1],c[2]);
+    m.userData.spin = (idx%2? 1:-1) * (0.15 + idx*0.03);
+    blockGroup.add(m);
+  });
+  group.add(blockGroup);
+
+  // ══════════ SCROLL STATE ══════════
+  let scrollP = 0, targetP = 0;
+  function updateScroll(){
+    const h = document.documentElement.scrollHeight - innerHeight;
+    targetP = h>0 ? Math.min(1, Math.max(0, scrollY/h)) : 0;
+  }
+  addEventListener('scroll', updateScroll, {passive:true});
+  updateScroll();
+
+  // mouse parallax
+  let mx=0, my=0;
+  addEventListener('mousemove', e=>{
+    mx = (e.clientX/innerWidth - 0.5);
+    my = (e.clientY/innerHeight - 0.5);
+  });
+
+  function smooth(a,b,x){
+    const t = Math.min(1, Math.max(0, (x-a)/(b-a)));
+    return t*t*(3-2*t);
+  }
+
+  // ══════════ RENDER LOOP ══════════
+  const clock = new THREE.Clock();
+  function render(){
+    requestAnimationFrame(render);
+    const t = clock.getElapsedTime();
+
+    // suaviza o progresso do scroll (reversível automaticamente)
+    scrollP += (targetP - scrollP) * 0.06;
+
+    // pesos das fases
+    const wSphere = smooth(0.02, 0.22, scrollP) * (1 - smooth(0.40, 0.58, scrollP));
+    const wWave   = smooth(0.40, 0.58, scrollP) * (1 - smooth(0.72, 0.88, scrollP));
+    const wBlocks = smooth(0.72, 0.88, scrollP);
+
+    // mistura posições por partícula
+    const p = geo.attributes.position.array;
+    for(let i=0;i<N;i++){
+      const i3=i*3;
+      let x = scatter[i3], y = scatter[i3+1], z = scatter[i3+2];
+      // drift orgânico na nuvem
+      x += Math.sin(t*0.3 + i)*0.06;
+      y += Math.cos(t*0.25 + i*1.3)*0.06;
+
+      // → esfera
+      x += (sphereT[i3]  -x)*wSphere;
+      y += (sphereT[i3+1]-y)*wSphere;
+      z += (sphereT[i3+2]-z)*wSphere;
+
+      // → onda (com animação de altura)
+      if(wWave>0.001){
+        const wx = waveT[i3], wy = waveT[i3+1];
+        const wz = Math.sin(wx*0.8 + t*1.2)*0.7 + Math.cos(wy*1.1 + t*0.9)*0.5;
+        x += (wx-x)*wWave;
+        y += (wy-y)*wWave;
+        z += (wz-z)*wWave;
+      }
+
+      // → blocos
+      x += (blocksT[i3]  -x)*wBlocks;
+      y += (blocksT[i3+1]-y)*wBlocks;
+      z += (blocksT[i3+2]-z)*wBlocks;
+
+      p[i3]=x; p[i3+1]=y; p[i3+2]=z;
+    }
+    geo.attributes.position.needsUpdate = true;
+
+    // linhas da esfera acompanham os pontos
+    lineMat.opacity = wSphere * 0.28;
+    if(wSphere>0.01){
+      for(let k=0;k<linePairs.length;k++){
+        const [a,b]=linePairs[k];
+        linePos[k*6]  =p[a*3];  linePos[k*6+1]=p[a*3+1]; linePos[k*6+2]=p[a*3+2];
+        linePos[k*6+3]=p[b*3];  linePos[k*6+4]=p[b*3+1]; linePos[k*6+5]=p[b*3+2];
+      }
+      lineGeo.attributes.position.needsUpdate = true;
+    }
+
+    // blocos wireframe
+    bmat.opacity  = wBlocks * 0.5;
+    bmatW.opacity = wBlocks * 0.18;
+    blockGroup.children.forEach(m=>{
+      m.rotation.y = t * m.userData.spin;
+      m.rotation.x = t * m.userData.spin * 0.6;
+      m.position.y += Math.sin(t*0.8 + m.position.x)*0.0012;
+    });
+
+    // rotação global dirigida por scroll + tempo
+    group.rotation.y = scrollP * Math.PI * 1.6 + t*0.04;
+    group.rotation.x = Math.sin(scrollP * Math.PI) * 0.25;
+
+    // câmera: zoom sutil por fase + parallax do mouse
+    const camZ = 7 - wSphere*0.8 + wWave*0.5 - wBlocks*0.6;
+    camera.position.z += (camZ - camera.position.z)*0.05;
+    camera.position.x += (mx*0.8 - camera.position.x)*0.04;
+    camera.position.y += (-my*0.6 - camera.position.y)*0.04;
+    camera.lookAt(0,0,0);
+
+    // fade geral: some um pouco no meio das transições para dar respiro
+    mat.opacity = 0.55 + wSphere*0.35 + wBlocks*0.2;
+
+    renderer.render(scene, camera);
+  }
+  render();
+
+  addEventListener('resize', ()=>{
+    camera.aspect = innerWidth/innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(innerWidth, innerHeight);
+  });
+})();
 </script>
 </body>
 </html>
