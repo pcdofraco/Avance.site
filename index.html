@@ -28,7 +28,7 @@
   --sans:'Outfit',sans-serif;
 }
 html{background:var(--bg);scroll-behavior:smooth;}
-#bg3d{position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:0.85;}
+#bg3d{position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:0.55;}
 body{
   background:transparent;
   color:var(--t1);
@@ -448,6 +448,7 @@ section{padding:clamp(80px,12vw,160px) clamp(24px,5vw,72px);}
 .pricing-sub{font-size:clamp(13px,1.5vw,15px);font-weight:200;color:var(--t2);line-height:1.8;margin-bottom:56px;}
 
 .pricing-cards{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;text-align:left;}
+.pricing-cards.pricing-two{grid-template-columns:1fr 1fr;max-width:720px;margin:0 auto;}
 .pricing-card{
   background:rgba(245,240,235,0.02);
   border:1px solid rgba(245,240,235,0.07);
@@ -731,7 +732,7 @@ footer{
   .features-grid{grid-template-columns:1fr 1fr;}
   .showcase-inner{grid-template-columns:1fr;gap:40px;}
   .showcase-inner.reverse{direction:ltr;}
-  .pricing-cards{grid-template-columns:1fr;}
+  .pricing-cards, .pricing-cards.pricing-two{grid-template-columns:1fr;max-width:420px;}
   .test-grid{grid-template-columns:1fr;}
   nav .nav-links{display:none;}
 }
@@ -1206,7 +1207,7 @@ footer{
     <h2 class="pricing-title reveal reveal-delay-1">Simples e <em>transparente</em></h2>
     
   </div>
-  <div class="pricing-cards reveal reveal-delay-1" style="grid-template-columns:1fr 1fr;max-width:720px;margin:0 auto;">
+  <div class="pricing-cards pricing-two reveal reveal-delay-1">
     <div class="pricing-card">
       <span class="pricing-badge badge-free">Grátis</span>
       <div class="pricing-price">R$<sup></sup>0<sub>/mês</sub></div>
@@ -1567,7 +1568,7 @@ const track=document.getElementById('mTrack');
 track.innerHTML+=track.innerHTML;
 </script>
 
-<!-- THREE.JS 3D SCROLL SYSTEM -->
+<!-- THREE.JS 3D SCROLL SYSTEM — mente dispersa / rede neural / dopamina / organização / foco -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 (function(){
@@ -1584,10 +1585,9 @@ track.innerHTML+=track.innerHTML;
   const group = new THREE.Group();
   scene.add(group);
 
-  // ══════════ PARTICLES ══════════
   const N = 850;
 
-  // ---- Fase A: nuvem dispersa (hero) ----
+  // ══════ FASE A: MENTE DISPERSA (caos antes do sistema) ══════
   const scatter = new Float32Array(N*3);
   for(let i=0;i<N;i++){
     scatter[i*3]   = (Math.random()-0.5)*16;
@@ -1595,105 +1595,163 @@ track.innerHTML+=track.innerHTML;
     scatter[i*3+2] = (Math.random()-0.5)*8;
   }
 
-  // ---- Fase B: esfera de rede (estilo ícone AVANCE) ----
-  const sphereT = new Float32Array(N*3);
+  // ══════ FASE B: REDE NEURAL (neurônios + sinapses) ══════
+  const NEURONS = 14;
+  const ncenters = [];
+  for(let k=0;k<NEURONS;k++){
+    // distribuição orgânica em elipsoide (formato cérebro)
+    const a = Math.random()*Math.PI*2, b = Math.acos(Math.random()*2-1);
+    const r = 1.4 + Math.random()*1.4;
+    ncenters.push([
+      Math.sin(b)*Math.cos(a)*r*1.5,
+      Math.cos(b)*r*0.95,
+      Math.sin(b)*Math.sin(a)*r
+    ]);
+  }
+  // conexões: cada neurônio → 2 vizinhos mais próximos
+  const nconn = [];
+  for(let k=0;k<NEURONS;k++){
+    const ds = [];
+    for(let j=0;j<NEURONS;j++){
+      if(j===k) continue;
+      const dx=ncenters[k][0]-ncenters[j][0], dy=ncenters[k][1]-ncenters[j][1], dz=ncenters[k][2]-ncenters[j][2];
+      ds.push([dx*dx+dy*dy+dz*dz, j]);
+    }
+    ds.sort((a,b)=>a[0]-b[0]);
+    for(let m=0;m<2;m++){
+      const j = ds[m][1];
+      if(!nconn.some(c=>(c[0]===j&&c[1]===k))) nconn.push([k,j]);
+    }
+  }
+  const neuralT = new Float32Array(N*3);
   for(let i=0;i<N;i++){
-    // pontos distribuídos na superfície de uma esfera com jitter
-    const phi = Math.acos(1 - 2*(i+0.5)/N);
-    const theta = Math.PI * (1 + Math.sqrt(5)) * i;
-    const r = 2.4 + (Math.random()-0.5)*0.35;
-    sphereT[i*3]   = r*Math.sin(phi)*Math.cos(theta);
-    sphereT[i*3+1] = r*Math.cos(phi);
-    sphereT[i*3+2] = r*Math.sin(phi)*Math.sin(theta);
-  }
-
-  // ---- Fase C: grade ondulante (wave) ----
-  const waveT = new Float32Array(N*3);
-  {
-    const cols = 34, rows = Math.ceil(N/cols);
-    for(let i=0;i<N;i++){
-      const cx = i % cols, cy = Math.floor(i/cols);
-      waveT[i*3]   = (cx/(cols-1) - 0.5) * 14;
-      waveT[i*3+1] = (cy/(rows-1) - 0.5) * 8 - 0.5;
-      waveT[i*3+2] = 0;
+    if(i % 10 < 6){
+      // soma do neurônio: nuvem gaussiana em torno do centro
+      const c = ncenters[i % NEURONS];
+      neuralT[i*3]   = c[0] + (Math.random()-0.5)*0.5;
+      neuralT[i*3+1] = c[1] + (Math.random()-0.5)*0.5;
+      neuralT[i*3+2] = c[2] + (Math.random()-0.5)*0.5;
+    } else {
+      // dendritos: pontos ao longo das conexões
+      const [a,b] = nconn[i % nconn.length];
+      const f = Math.random();
+      neuralT[i*3]   = ncenters[a][0] + (ncenters[b][0]-ncenters[a][0])*f + (Math.random()-0.5)*0.12;
+      neuralT[i*3+1] = ncenters[a][1] + (ncenters[b][1]-ncenters[a][1])*f + (Math.random()-0.5)*0.12;
+      neuralT[i*3+2] = ncenters[a][2] + (ncenters[b][2]-ncenters[a][2])*f + (Math.random()-0.5)*0.12;
     }
   }
 
-  // ---- Fase D: blocos flutuantes (Plano Mental) ----
-  const blocksT = new Float32Array(N*3);
-  {
-    const centers = [
-      [-3.2, 1.6, -1],[ 3.0, 1.2,  0.5],[-1.4,-1.8,  1],
-      [ 1.8,-1.5, -1.5],[ 0.2, 2.6,  0],[-3.4,-0.6, -0.5],[ 3.4,-0.4, 1.2]
-    ];
-    for(let i=0;i<N;i++){
-      const c = centers[i % centers.length];
-      // pontos nas arestas de um cubo em torno do centro
-      const s = 0.62;
-      const edge = Math.floor(Math.random()*12);
-      const t = Math.random()*2-1;
-      let x=0,y=0,z=0;
-      const E = [
-        [t,-1,-1],[t,1,-1],[t,-1,1],[t,1,1],
-        [-1,t,-1],[1,t,-1],[-1,t,1],[1,t,1],
-        [-1,-1,t],[1,-1,t],[-1,1,t],[1,1,t]
-      ][edge];
-      x=E[0]*s; y=E[1]*s; z=E[2]*s;
-      blocksT[i*3]   = c[0]+x;
-      blocksT[i*3+1] = c[1]+y;
-      blocksT[i*3+2] = c[2]+z;
+  // ══════ FASE C: MOLÉCULA DE DOPAMINA ══════
+  // átomos (x,y): anel benzênico + 2 OH + cadeia etilamina
+  const SC = 1.15;
+  const ringC = [];
+  for(let k=0;k<6;k++){
+    const a = (Math.PI/6) + k*(Math.PI/3);
+    ringC.push([(-1.6 + Math.cos(a)*1.1)*SC, (Math.sin(a)*1.1)*SC]);
+  }
+  const atoms = [
+    ...ringC,                                   // 0-5 anel
+    [-3.45*SC,  1.05*SC],                       // 6 O (hidroxila)
+    [-3.45*SC, -1.05*SC],                       // 7 O (hidroxila)
+    [ 0.45*SC,  1.05*SC],                       // 8 C (CH2)
+    [ 1.5*SC,   0.55*SC],                       // 9 C (CH2)
+    [ 2.55*SC,  1.05*SC]                        // 10 N (amina)
+  ];
+  const bonds = [
+    [0,1],[1,2],[2,3],[3,4],[4,5],[5,0],        // anel
+    [2,6],[3,7],                                 // C–OH
+    [1,8],[8,9],[9,10]                           // cadeia
+  ];
+  const dopaT = new Float32Array(N*3);
+  for(let i=0;i<N;i++){
+    if(i % 10 < 4){
+      // átomo: cluster denso
+      const a = atoms[i % atoms.length];
+      const th = Math.random()*Math.PI*2, r = Math.random()*0.24;
+      dopaT[i*3]   = a[0] + Math.cos(th)*r;
+      dopaT[i*3+1] = a[1] + Math.sin(th)*r;
+      dopaT[i*3+2] = (Math.random()-0.5)*0.25;
+    } else {
+      // ligação: pontos ao longo
+      const [a,b] = bonds[i % bonds.length];
+      const f = Math.random();
+      dopaT[i*3]   = atoms[a][0] + (atoms[b][0]-atoms[a][0])*f + (Math.random()-0.5)*0.06;
+      dopaT[i*3+1] = atoms[a][1] + (atoms[b][1]-atoms[a][1])*f + (Math.random()-0.5)*0.06;
+      dopaT[i*3+2] = (Math.random()-0.5)*0.12;
     }
   }
 
+  // ══════ FASE D: ORGANIZAÇÃO (grade 3D perfeita) ══════
+  const gridT = new Float32Array(N*3);
+  {
+    const GX=10, GY=6, GZ=3;
+    for(let i=0;i<N;i++){
+      const s = i % (GX*GY*GZ);
+      const gx = s % GX, gy = Math.floor(s/GX) % GY, gz = Math.floor(s/(GX*GY));
+      gridT[i*3]   = (gx/(GX-1) - 0.5) * 10;
+      gridT[i*3+1] = (gy/(GY-1) - 0.5) * 6;
+      gridT[i*3+2] = (gz/(GZ-1) - 0.5) * 3;
+    }
+  }
+
+  // ══════ FASE E: FOCO (anéis convergindo + núcleo) ══════
+  const focusRing = new Uint8Array(N), focusTh = new Float32Array(N), focusR = new Float32Array(N);
+  for(let i=0;i<N;i++){
+    focusTh[i] = i * 2.39996;
+    if(i % 10 < 3){ focusRing[i]=0; focusR[i]=Math.random()*0.28; }          // núcleo
+    else if(i % 10 < 6){ focusRing[i]=1; focusR[i]=0.9;  }
+    else if(i % 10 < 8){ focusRing[i]=2; focusR[i]=1.7;  }
+    else               { focusRing[i]=3; focusR[i]=2.5;  }
+  }
+
+  // ══════ GEOMETRIA DAS PARTÍCULAS ══════
   const posAttr = new Float32Array(N*3);
   posAttr.set(scatter);
   const geo = new THREE.BufferGeometry();
   geo.setAttribute('position', new THREE.BufferAttribute(posAttr, 3));
   const mat = new THREE.PointsMaterial({
-    color: 0xffffff, size: 0.045, transparent:true, opacity:0.9,
+    color: 0xffffff, size: 0.036, transparent:true, opacity:0.7,
     blending: THREE.AdditiveBlending, depthWrite:false
   });
-  const points = new THREE.Points(geo, mat);
-  group.add(points);
+  group.add(new THREE.Points(geo, mat));
 
-  // ══════════ LINHAS DA ESFERA (conexões) ══════════
-  const linePairs = [];
-  for(let i=0;i<N;i+=7){
-    // conecta cada 7º ponto ao vizinho mais próximo na esfera
-    let best=-1, bd=1e9;
-    for(let j=0;j<N;j+=3){
-      if(j===i) continue;
-      const dx=sphereT[i*3]-sphereT[j*3], dy=sphereT[i*3+1]-sphereT[j*3+1], dz=sphereT[i*3+2]-sphereT[j*3+2];
-      const d=dx*dx+dy*dy+dz*dz;
-      if(d<bd && d>0.02){bd=d;best=j;}
-    }
-    if(best>=0 && bd<1.4) linePairs.push([i,best]);
-  }
-  const lineGeo = new THREE.BufferGeometry();
-  const linePos = new Float32Array(linePairs.length*6);
-  lineGeo.setAttribute('position', new THREE.BufferAttribute(linePos,3));
-  const lineMat = new THREE.LineBasicMaterial({color:0x4ade80, transparent:true, opacity:0, blending:THREE.AdditiveBlending, depthWrite:false});
-  const lines = new THREE.LineSegments(lineGeo, lineMat);
-  group.add(lines);
-
-  // ══════════ WIREFRAME DOS BLOCOS ══════════
-  const blockGroup = new THREE.Group();
-  const bcenters = [
-    [-3.2, 1.6, -1],[ 3.0, 1.2,  0.5],[-1.4,-1.8,  1],
-    [ 1.8,-1.5, -1.5],[ 0.2, 2.6,  0],[-3.4,-0.6, -0.5],[ 3.4,-0.4, 1.2]
-  ];
-  const bmat = new THREE.LineBasicMaterial({color:0x4ade80, transparent:true, opacity:0, depthWrite:false});
-  const bmatW = new THREE.LineBasicMaterial({color:0xffffff, transparent:true, opacity:0, depthWrite:false});
-  bcenters.forEach((c,idx)=>{
-    const g = new THREE.EdgesGeometry(new THREE.BoxGeometry(1.24,1.24,1.24));
-    const m = new THREE.LineSegments(g, idx%2===0 ? bmat : bmatW);
-    m.position.set(c[0],c[1],c[2]);
-    m.userData.spin = (idx%2? 1:-1) * (0.15 + idx*0.03);
-    blockGroup.add(m);
+  // ══════ LINHAS: conexões neurais (estáticas nos centros) ══════
+  const nlinePos = new Float32Array(nconn.length*6);
+  nconn.forEach(([a,b],k)=>{
+    nlinePos[k*6]=ncenters[a][0]; nlinePos[k*6+1]=ncenters[a][1]; nlinePos[k*6+2]=ncenters[a][2];
+    nlinePos[k*6+3]=ncenters[b][0]; nlinePos[k*6+4]=ncenters[b][1]; nlinePos[k*6+5]=ncenters[b][2];
   });
-  group.add(blockGroup);
+  const nlineGeo = new THREE.BufferGeometry();
+  nlineGeo.setAttribute('position', new THREE.BufferAttribute(nlinePos,3));
+  const nlineMat = new THREE.LineBasicMaterial({color:0x4ade80, transparent:true, opacity:0, blending:THREE.AdditiveBlending, depthWrite:false});
+  group.add(new THREE.LineSegments(nlineGeo, nlineMat));
 
-  // ══════════ SCROLL STATE ══════════
+  // ══════ SINAPSES: pulsos viajando pelas conexões ══════
+  const NPULSE = 36;
+  const pulsePos = new Float32Array(NPULSE*3);
+  const pulseConn = new Uint8Array(NPULSE), pulseOff = new Float32Array(NPULSE), pulseSpd = new Float32Array(NPULSE);
+  for(let k=0;k<NPULSE;k++){
+    pulseConn[k] = k % nconn.length;
+    pulseOff[k] = Math.random();
+    pulseSpd[k] = 0.25 + Math.random()*0.4;
+  }
+  const pulseGeo = new THREE.BufferGeometry();
+  pulseGeo.setAttribute('position', new THREE.BufferAttribute(pulsePos,3));
+  const pulseMat = new THREE.PointsMaterial({color:0x4ade80, size:0.085, transparent:true, opacity:0, blending:THREE.AdditiveBlending, depthWrite:false});
+  group.add(new THREE.Points(pulseGeo, pulseMat));
+
+  // ══════ LIGAÇÕES DA MOLÉCULA (linhas douradas) ══════
+  const blinePos = new Float32Array(bonds.length*6);
+  bonds.forEach(([a,b],k)=>{
+    blinePos[k*6]=atoms[a][0]; blinePos[k*6+1]=atoms[a][1]; blinePos[k*6+2]=0;
+    blinePos[k*6+3]=atoms[b][0]; blinePos[k*6+4]=atoms[b][1]; blinePos[k*6+5]=0;
+  });
+  const blineGeo = new THREE.BufferGeometry();
+  blineGeo.setAttribute('position', new THREE.BufferAttribute(blinePos,3));
+  const blineMat = new THREE.LineBasicMaterial({color:0xd2b478, transparent:true, opacity:0, blending:THREE.AdditiveBlending, depthWrite:false});
+  group.add(new THREE.LineSegments(blineGeo, blineMat));
+
+  // ══════ SCROLL STATE ══════
   let scrollP = 0, targetP = 0;
   function updateScroll(){
     const h = document.documentElement.scrollHeight - innerHeight;
@@ -1702,7 +1760,6 @@ track.innerHTML+=track.innerHTML;
   addEventListener('scroll', updateScroll, {passive:true});
   updateScroll();
 
-  // mouse parallax
   let mx=0, my=0;
   addEventListener('mousemove', e=>{
     mx = (e.clientX/innerWidth - 0.5);
@@ -1714,85 +1771,99 @@ track.innerHTML+=track.innerHTML;
     return t*t*(3-2*t);
   }
 
-  // ══════════ RENDER LOOP ══════════
+  // ══════ RENDER ══════
   const clock = new THREE.Clock();
   function render(){
     requestAnimationFrame(render);
     const t = clock.getElapsedTime();
 
-    // suaviza o progresso do scroll (reversível automaticamente)
     scrollP += (targetP - scrollP) * 0.06;
 
-    // pesos das fases
-    const wSphere = smooth(0.02, 0.22, scrollP) * (1 - smooth(0.40, 0.58, scrollP));
-    const wWave   = smooth(0.40, 0.58, scrollP) * (1 - smooth(0.72, 0.88, scrollP));
-    const wBlocks = smooth(0.72, 0.88, scrollP);
+    // janelas das fases (reversíveis)
+    const wNeural = smooth(0.05, 0.20, scrollP) * (1 - smooth(0.30, 0.42, scrollP));
+    const wDopa   = smooth(0.30, 0.42, scrollP) * (1 - smooth(0.52, 0.64, scrollP));
+    const wGrid   = smooth(0.52, 0.64, scrollP) * (1 - smooth(0.74, 0.86, scrollP));
+    const wFocus  = smooth(0.74, 0.86, scrollP);
 
-    // mistura posições por partícula
     const p = geo.attributes.position.array;
     for(let i=0;i<N;i++){
       const i3=i*3;
       let x = scatter[i3], y = scatter[i3+1], z = scatter[i3+2];
-      // drift orgânico na nuvem
       x += Math.sin(t*0.3 + i)*0.06;
       y += Math.cos(t*0.25 + i*1.3)*0.06;
 
-      // → esfera
-      x += (sphereT[i3]  -x)*wSphere;
-      y += (sphereT[i3+1]-y)*wSphere;
-      z += (sphereT[i3+2]-z)*wSphere;
-
-      // → onda (com animação de altura)
-      if(wWave>0.001){
-        const wx = waveT[i3], wy = waveT[i3+1];
-        const wz = Math.sin(wx*0.8 + t*1.2)*0.7 + Math.cos(wy*1.1 + t*0.9)*0.5;
-        x += (wx-x)*wWave;
-        y += (wy-y)*wWave;
-        z += (wz-z)*wWave;
+      // → rede neural (com respiração sutil dos neurônios)
+      if(wNeural>0.001){
+        const br = 1 + Math.sin(t*1.6 + (i%NEURONS))*0.03;
+        x += (neuralT[i3]*br  -x)*wNeural;
+        y += (neuralT[i3+1]*br-y)*wNeural;
+        z += (neuralT[i3+2]*br-z)*wNeural;
       }
-
-      // → blocos
-      x += (blocksT[i3]  -x)*wBlocks;
-      y += (blocksT[i3+1]-y)*wBlocks;
-      z += (blocksT[i3+2]-z)*wBlocks;
+      // → molécula de dopamina
+      if(wDopa>0.001){
+        x += (dopaT[i3]  -x)*wDopa;
+        y += (dopaT[i3+1]-y)*wDopa;
+        z += (dopaT[i3+2]-z)*wDopa;
+      }
+      // → grade organizada (com onda de "encaixe" percorrendo)
+      if(wGrid>0.001){
+        const settle = Math.sin(gridT[i3]*0.5 - t*1.4)*0.05*(1-wGrid);
+        x += (gridT[i3]  -x)*wGrid;
+        y += (gridT[i3+1]+settle -y)*wGrid;
+        z += (gridT[i3+2]-z)*wGrid;
+      }
+      // → foco (anéis girando devagar + núcleo)
+      if(wFocus>0.001){
+        const rg = focusRing[i];
+        const spin = rg===0 ? 0 : (rg%2? 1:-1)*t*0.12;
+        const R = focusR[i]*(1 + (rg>0 ? Math.sin(t*1.8 - rg)*0.03 : 0));
+        const th = focusTh[i] + spin;
+        x += (Math.cos(th)*R -x)*wFocus;
+        y += (Math.sin(th)*R -y)*wFocus;
+        z += ((rg===0? (Math.random!==null? Math.sin(i)*0.06:0) : 0) -z)*wFocus;
+      }
 
       p[i3]=x; p[i3+1]=y; p[i3+2]=z;
     }
     geo.attributes.position.needsUpdate = true;
 
-    // linhas da esfera acompanham os pontos
-    lineMat.opacity = wSphere * 0.28;
-    if(wSphere>0.01){
-      for(let k=0;k<linePairs.length;k++){
-        const [a,b]=linePairs[k];
-        linePos[k*6]  =p[a*3];  linePos[k*6+1]=p[a*3+1]; linePos[k*6+2]=p[a*3+2];
-        linePos[k*6+3]=p[b*3];  linePos[k*6+4]=p[b*3+1]; linePos[k*6+5]=p[b*3+2];
+    // linhas neurais + sinapses
+    nlineMat.opacity = wNeural * 0.16;
+    pulseMat.opacity = wNeural * 0.55;
+    if(wNeural>0.01){
+      for(let k=0;k<NPULSE;k++){
+        const [a,b] = nconn[pulseConn[k]];
+        const f = (t*pulseSpd[k] + pulseOff[k]) % 1;
+        pulsePos[k*3]   = ncenters[a][0] + (ncenters[b][0]-ncenters[a][0])*f;
+        pulsePos[k*3+1] = ncenters[a][1] + (ncenters[b][1]-ncenters[a][1])*f;
+        pulsePos[k*3+2] = ncenters[a][2] + (ncenters[b][2]-ncenters[a][2])*f;
       }
-      lineGeo.attributes.position.needsUpdate = true;
+      pulseGeo.attributes.position.needsUpdate = true;
     }
 
-    // blocos wireframe
-    bmat.opacity  = wBlocks * 0.5;
-    bmatW.opacity = wBlocks * 0.18;
-    blockGroup.children.forEach(m=>{
-      m.rotation.y = t * m.userData.spin;
-      m.rotation.x = t * m.userData.spin * 0.6;
-      m.position.y += Math.sin(t*0.8 + m.position.x)*0.0012;
-    });
+    // ligações da molécula
+    blineMat.opacity = wDopa * 0.3;
 
-    // rotação global dirigida por scroll + tempo
-    group.rotation.y = scrollP * Math.PI * 1.6 + t*0.04;
-    group.rotation.x = Math.sin(scrollP * Math.PI) * 0.25;
+    // cor: verde na rede neural, dourado na dopamina, branco no resto
+    mat.color.setRGB(
+      1 - wNeural*0.14,
+      1 - wDopa*0.05,
+      1 - wNeural*0.14 - wDopa*0.26
+    );
 
-    // câmera: zoom sutil por fase + parallax do mouse
-    const camZ = 7 - wSphere*0.8 + wWave*0.5 - wBlocks*0.6;
+    // rotação global — reduzida na molécula (pra ler a estrutura) e no foco (frontal)
+    const rotDamp = (1 - wDopa*0.75) * (1 - wFocus*0.85);
+    group.rotation.y = (scrollP * Math.PI * 1.5 + t*0.04) * rotDamp;
+    group.rotation.x = Math.sin(scrollP * Math.PI) * 0.22 * rotDamp;
+
+    // câmera
+    const camZ = 7 - wNeural*0.4 - wDopa*0.8 + wGrid*0.4 - wFocus*0.6;
     camera.position.z += (camZ - camera.position.z)*0.05;
     camera.position.x += (mx*0.8 - camera.position.x)*0.04;
     camera.position.y += (-my*0.6 - camera.position.y)*0.04;
     camera.lookAt(0,0,0);
 
-    // fade geral: some um pouco no meio das transições para dar respiro
-    mat.opacity = 0.55 + wSphere*0.35 + wBlocks*0.2;
+    mat.opacity = 0.42 + wNeural*0.18 + wDopa*0.22 + wFocus*0.15;
 
     renderer.render(scene, camera);
   }
