@@ -941,20 +941,20 @@ footer{
     <div class="feat-card">
       <div class="feat-icon">◇</div>
       <h3 class="feat-title">Finanças claras</h3>
-      <p class="feat-desc">Veja receita, saídas e economia em segundos. Filtros por semana, mês ou ano. Categorias visuais e gráfico de evolução animado.</p>
-      <span class="feat-tag">receita · categorias · metas</span>
+      <p class="feat-desc">Receita, saídas e contas a pagar em segundos. Multi-moeda: reais, dólar, euro, libra e até bitcoin — cada moeda com seu próprio saldo.</p>
+      <span class="feat-tag">multi-moeda · contas · categorias</span>
     </div>
     <div class="feat-card">
       <div class="feat-icon">△</div>
       <h3 class="feat-title">Treino no seu ritmo</h3>
-      <p class="feat-desc">Crie fichas personalizadas por dia da semana. Inicie o treino, marque as séries concluídas e acompanhe seu progresso semana a semana.</p>
-      <span class="feat-tag">fichas · séries · conclusão</span>
+      <p class="feat-desc">Fichas por dia da semana, registro de cardio e estatísticas de evolução. No final, segure o botão para concluir — com animação e tudo.</p>
+      <span class="feat-tag">fichas · cardio · estatísticas</span>
     </div>
     <div class="feat-card">
       <div class="feat-icon">◫</div>
       <h3 class="feat-title">Estudos com foco</h3>
-      <p class="feat-desc">Registre sessões com cronômetro, organize anotações por matéria e acompanhe seu progresso com mapa de calor e meta diária.</p>
-      <span class="feat-tag">timer · anotações · heatmap</span>
+      <p class="feat-desc">Organize matérias e atividades em cards coloridos, registre sessões com cronômetro e mantenha anotações por matéria.</p>
+      <span class="feat-tag">matérias · atividades · timer</span>
     </div>
     <div class="feat-card">
       <div class="feat-icon">⬡</div>
@@ -1036,12 +1036,12 @@ footer{
     <div class="showcase-text">
       <div class="sec-label reveal">Finanças</div>
       <h2 class="showcase-title reveal reveal-delay-1">Clareza financeira</h2>
-      <p class="showcase-desc reveal reveal-delay-2">Entradas, saídas, categorias e metas. Tudo filtrado por semana, mês ou ano.</p>
+      <p class="showcase-desc reveal reveal-delay-2">Entradas, saídas, contas a pagar e categorias. Em reais, dólar, euro, libra ou bitcoin — cada moeda com seu próprio saldo.</p>
       <div class="showcase-pills reveal reveal-delay-3">
-        <span class="showcase-pill">semana · mês · ano</span>
+        <span class="showcase-pill">multi-moeda R$ US$ € £ ₿</span>
+        <span class="showcase-pill">contas a pagar</span>
+        <span class="showcase-pill">semana · mês · ano · tudo</span>
         <span class="showcase-pill">categorias visuais</span>
-        <span class="showcase-pill">metas financeiras</span>
-        <span class="showcase-pill">animação ao entrar</span>
       </div>
     </div>
     <div class="reveal reveal-delay-2">
@@ -1051,9 +1051,10 @@ footer{
           <div class="mock-dot" style="background:#3a3a3a"></div>
           <div class="mock-dot" style="background:#3a3a3a"></div>
         </div>
-        <div class="mock-fin-hero">
-          <div class="mock-fin-lbl-sm">total · último mês</div>
+        <div class="mock-fin-hero" style="position:relative;">
+          <div class="mock-fin-lbl-sm">saldo · R$ brasileiro</div>
           <div class="mock-fin-big">R$ 2.480</div>
+          <div style="position:absolute;right:20px;bottom:14px;width:30px;height:30px;border-radius:50%;border:1px solid rgba(245,240,235,0.14);background:rgba(245,240,235,0.05);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:8px;color:rgba(245,240,235,0.55);">R$</div>
         </div>
         <div class="mock-fin-row">
           <div>
@@ -1095,12 +1096,12 @@ footer{
     <div class="showcase-text">
       <div class="sec-label reveal">Treino</div>
       <h2 class="showcase-title reveal reveal-delay-1">Treino estruturado</h2>
-      <p class="showcase-desc reveal reveal-delay-2">Fichas por dia da semana. Inicie o treino e marque cada série concluída.</p>
+      <p class="showcase-desc reveal reveal-delay-2">Fichas por dia da semana, registro de cardio e estatísticas. No final, segure o botão para concluir — e veja o levantador animar junto.</p>
       <div class="showcase-pills reveal reveal-delay-3">
         <span class="showcase-pill">fichas por dia</span>
-        <span class="showcase-pill">modo treino</span>
-        <span class="showcase-pill">séries por exercício</span>
-        <span class="showcase-pill">conclusão diária</span>
+        <span class="showcase-pill">cardio</span>
+        <span class="showcase-pill">estatísticas</span>
+        <span class="showcase-pill">segure para concluir</span>
       </div>
     </div>
     <div class="reveal reveal-delay-2">
@@ -1134,10 +1135,9 @@ footer{
               <div class="mock-ficha-meta">5 exercícios</div>
             </div>
           </div>
-          <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap;">
-            <div style="padding:10px 14px;border-radius:10px;border:1px solid rgba(245,240,235,0.1);background:rgba(245,240,235,0.03);font-family:var(--mono);font-size:9px;color:rgba(245,240,235,0.3);">8 reps</div>
-            <div style="padding:10px 14px;border-radius:10px;border:1px solid rgba(245,240,235,0.22);background:rgba(245,240,235,0.08);font-family:var(--mono);font-size:9px;color:rgba(245,240,235,0.8);">8 reps</div>
-            <div style="padding:10px 14px;border-radius:10px;border:1px solid rgba(245,240,235,0.1);background:rgba(245,240,235,0.03);font-family:var(--mono);font-size:9px;color:rgba(245,240,235,0.3);">8 reps</div>
+          <div style="margin-top:16px;position:relative;height:38px;border-radius:999px;border:1px solid rgba(245,240,235,0.16);background:rgba(245,240,235,0.03);overflow:hidden;">
+            <div style="position:absolute;left:0;top:0;bottom:0;width:58%;background:rgba(245,240,235,0.09);border-right:1px solid rgba(245,240,235,0.3);"></div>
+            <div style="position:relative;z-index:2;height:100%;display:flex;align-items:center;justify-content:center;gap:7px;font-family:var(--mono);font-size:8px;letter-spacing:0.16em;color:rgba(245,240,235,0.6);text-transform:uppercase;">✓ segure para concluir</div>
           </div>
         </div>
       </div>
@@ -1213,16 +1213,15 @@ footer{
       <div class="pricing-price">R$<sup></sup>0<sub>/mês</sub></div>
       <div class="pricing-period">para sempre</div>
       <div class="pricing-divider"></div>
-      <div class="pricing-feature included">Até 5 hábitos</div>
-      <div class="pricing-feature included">Até 5 tarefas</div>
-      <div class="pricing-feature included">Finanças básica</div>
-      <div class="pricing-feature included">Dashboard limitado</div>
+      <div class="pricing-feature included">Hábitos limitados</div>
+      <div class="pricing-feature included">Tarefas limitadas</div>
+      <div class="pricing-feature included">Finanças limitada</div>
+      <div class="pricing-feature included">Treino limitado</div>
+      <div class="pricing-feature included">Estudos limitado</div>
+      <div class="pricing-feature included">Estatísticas básicas da dashboard</div>
       <div class="pricing-feature included">Sync entre dispositivos</div>
-      <div class="pricing-feature included">Atualizações constantes</div>
-      <div class="pricing-feature">Treino completo</div>
-      <div class="pricing-feature">Estudos</div>
+      <div class="pricing-feature">Estatísticas de treino</div>
       <div class="pricing-feature">Plano Mental</div>
-      <div class="pricing-feature">Estatísticas completas</div>
       <a href="" class="pricing-btn btn-pricefree" target="_blank">Em Breve!</a>
     </div>
     <div class="pricing-card featured">
@@ -1232,14 +1231,13 @@ footer{
       <div class="pricing-divider"></div>
       <div class="pricing-feature included">Hábitos ilimitados</div>
       <div class="pricing-feature included">Tarefas ilimitadas</div>
-      <div class="pricing-feature included">Finanças completa</div>
-      <div class="pricing-feature included">Dashboard completo</div>
+      <div class="pricing-feature included">Finanças completas</div>
+      <div class="pricing-feature included">Treino completo</div>
+      <div class="pricing-feature included">Estudos completo</div>
+      <div class="pricing-feature included">Estatísticas avançadas da dashboard</div>
+      <div class="pricing-feature included">Plano Mental</div>
       <div class="pricing-feature included">Sync entre dispositivos</div>
       <div class="pricing-feature included">Atualizações constantes</div>
-      <div class="pricing-feature included">Treino completo</div>
-      <div class="pricing-feature included">Estudos</div>
-      <div class="pricing-feature included">Plano Mental</div>
-      <div class="pricing-feature included">Estatísticas completas</div>
       <a href="" class="pricing-btn btn-pricepro" target="_blank">Em Breve!</a>
     </div>
   </div>
@@ -1710,7 +1708,7 @@ track.innerHTML+=track.innerHTML;
   const geo = new THREE.BufferGeometry();
   geo.setAttribute('position', new THREE.BufferAttribute(posAttr, 3));
   const mat = new THREE.PointsMaterial({
-    color: 0xffffff, size: 0.036, transparent:true, opacity:0.7,
+    color: 0xffffff, size: 0.03, transparent:true, opacity:0.45,
     blending: THREE.AdditiveBlending, depthWrite:false
   });
   group.add(new THREE.Points(geo, mat));
@@ -1828,8 +1826,8 @@ track.innerHTML+=track.innerHTML;
     geo.attributes.position.needsUpdate = true;
 
     // linhas neurais + sinapses
-    nlineMat.opacity = wNeural * 0.16;
-    pulseMat.opacity = wNeural * 0.55;
+    nlineMat.opacity = wNeural * 0.09;
+    pulseMat.opacity = wNeural * 0.3;
     if(wNeural>0.01){
       for(let k=0;k<NPULSE;k++){
         const [a,b] = nconn[pulseConn[k]];
@@ -1842,7 +1840,7 @@ track.innerHTML+=track.innerHTML;
     }
 
     // ligações da molécula
-    blineMat.opacity = wDopa * 0.3;
+    blineMat.opacity = wDopa * 0.16;
 
     // cor: verde na rede neural, dourado na dopamina, branco no resto
     mat.color.setRGB(
@@ -1863,7 +1861,7 @@ track.innerHTML+=track.innerHTML;
     camera.position.y += (-my*0.6 - camera.position.y)*0.04;
     camera.lookAt(0,0,0);
 
-    mat.opacity = 0.42 + wNeural*0.18 + wDopa*0.22 + wFocus*0.15;
+    mat.opacity = 0.24 + wNeural*0.1 + wDopa*0.12 + wFocus*0.08;
 
     renderer.render(scene, camera);
   }
